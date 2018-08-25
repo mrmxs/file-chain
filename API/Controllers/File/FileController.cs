@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Models;
+using System.IO;
 using API.Models.File;
+using IPFSLibrary.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Controllers.File
 {
@@ -12,25 +12,54 @@ namespace API.Controllers.File
     [ApiController]
     public class FileController : ControllerBase
     {
+        private IConfiguration _configuration;
+        private IIpfsService _ipfsService;
+
+        public FileController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ipfsService = new IpfsService(
+                _configuration["IpfsApi:host"],
+                int.Parse(_configuration["IpfsApi:port"]),
+                _configuration["IpfsApi:protocol"]
+            );
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<FileDto>> Get()
         {
-            return new[] {FileDto.Stub(), FileDto.Stub()};
+            throw new NotImplementedException();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public ActionResult<FileDto> Get(int id)
         {
-            return FileDto.Stub();
+            throw new NotImplementedException();
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody] FileDto value)
+        public IActionResult Post([FromBody] FileDto file)
         {
-            throw new NotImplementedException();
+            var fileName = Guid.NewGuid().ToString();
+            
+            using (var fileStream = new FileStream(file.Source.Path, FileMode.Open))
+            {
+            
+                var ipfsFile = _ipfsService.Add(fileName, fileStream);
+
+                return Ok(ipfsFile);
+            }
+            
+//            var fileStream = new MemoryStream(file.Source.Source);
+//            var fileName = Guid.NewGuid().ToString();
+//            
+//            var ipfsFile = _ipfsService.Add(fileName, fileStream);
+//
+//            return Ok(ipfsFile);
+
         }
 
         // PUT api/values/5

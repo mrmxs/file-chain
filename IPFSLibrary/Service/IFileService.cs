@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using IPFSClassLibrary.Model;
+using System.IO;
+using IPFSLibrary.Model;
 
-namespace IPFSClassLibrary.Service
+namespace IPFSLibrary.Service
 {
-    public interface IFileService
+    public interface IIpfsService
     {
-        bool Add();
-        bool Edit();
+        IpfsFile Add(string name, Stream source);
+        IpfsFile Edit();
         
-        File Get(string hash);
-        IEnumerable<File> Get(string[] hashes);
+        IpfsFile Get(string hash);
+        IEnumerable<IpfsFile> Get(string[] hashes);
     }
 }

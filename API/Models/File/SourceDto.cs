@@ -7,6 +7,7 @@ namespace API.Models.File
     {
         public int? Id { get; set; }
         public byte[] Source { get; set; }
+        public string Path { get; set; }
         public string Hash { get; internal set; }
 
         public static SourceDto Stub()

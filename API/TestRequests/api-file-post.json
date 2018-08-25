@@ -1,0 +1,23 @@
+﻿{
+  "Id": "4",
+  "Source": {
+    "Id": "4",
+    "Path": "D:\\ipfstest\\Cosmic-Mandala.jpg",
+    "Hash": "454564hjkhdf454"
+  },
+  "Properties": {
+    "Id": "4",
+    "Name": "Test.doc",
+    "ContentType": ".doc",
+    "Size": "123"
+  },
+  "Access": {
+    "Id": "4",
+    "Owner": "125",
+    "Editors": [],
+    "Viewers": [
+      126,
+      3
+    ]
+  }
+}

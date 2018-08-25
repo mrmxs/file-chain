@@ -1,42 +1,65 @@
 ﻿using System.Collections.Generic;
-using IPFSClassLibrary.Model;
-using IPFSClassLibrary.Service;
+using System.IO;
+using System.Threading.Tasks;
+using Ipfs;
+using IPFSLibrary.Model;
 
-namespace IPFSClassLibrary.Service
+namespace IPFSLibrary.Service
 {
-    public class FileService : IFileService
+    public class IpfsService : IIpfsService
     {
-//        private string _host;
-//        private string _port;
-//        private string _protocol;
-        
-        
+        private string _apiUrl;
+        private string _fileEndpoint;
 
-        public FileService(string host, int port, string protocol)
+
+        public IpfsService(string host, int port, string protocol)
         {
-//            _host = host;
-//            _port = port;
-//            _protocol = protocol;
+            _apiUrl = $"{protocol}://{host}:{port}";
+            _fileEndpoint = $"{protocol}://{host}/ipfs/";
+            ;
         }
 
-        public bool Add()
+        public IpfsFile Add(string name, Stream source)
+        {
+            var multiHash = AddAsync(name, source).Result.Hash.ToString();
+            
+            return new IpfsFile
+            {
+                Hash = multiHash,
+                Url = _fileEndpoint + multiHash,
+            };
+        }
+
+        public IpfsFile Edit()
         {
             throw new System.NotImplementedException();
         }
 
-        public bool Edit()
+        public IpfsFile Get(string hash)
+        {
+            return new IpfsFile
+            {
+                Hash = hash,
+                Url = _fileEndpoint + hash,
+            };
+        }
+
+        public IEnumerable<IpfsFile> Get(string[] hashes)
         {
             throw new System.NotImplementedException();
         }
 
-        public File Get(string hash)
+        private async Task<MerkleNode> AddAsync(string name, Stream stream)
         {
-            throw new System.NotImplementedException();
-        }
+            using (var ipfs = new IpfsClient(_apiUrl))
+            {
+                var inputStream = new IpfsStream(name, stream);
 
-        public IEnumerable<File> Get(string[] hashes)
-        {
-            throw new System.NotImplementedException();
+                var merkleNode = await ipfs.Add(inputStream).ConfigureAwait(false);
+                //TODO uncomment me in prod
+//                var multiHash = ipfs.Pin.Add(merkleNode.Hash.ToString());
+                return merkleNode;
+            }
         }
     }
 }
