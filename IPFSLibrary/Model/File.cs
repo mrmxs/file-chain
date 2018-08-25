@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace IPFSClassLibrary.Model
+namespace IPFSLibrary.Model
 {
-    public class File
+    public class IpfsFile
     {
-        public string IpfsHash { get; set; }
-        public byte[] Source { get; set; }
+        public string Hash { get; set; }
         public string Url { get; set; }
     }
 }
