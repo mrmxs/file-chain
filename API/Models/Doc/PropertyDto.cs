@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace API.Models.File
+namespace API.Models.Doc
 {
     public class PropertyDto
     {

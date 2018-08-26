@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using API.Models.File;
+using API.Models.Doc;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.File
+namespace API.Controllers.Doc
 {
-    [Route("api/file/[controller]")]
+    [Route("api/doc/[controller]")]
     [ApiController]
     public class FileInfoController : ControllerBase
     {

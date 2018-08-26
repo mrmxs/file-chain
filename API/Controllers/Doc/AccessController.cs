@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.File
+namespace API.Controllers.Doc
 {
-    [Route("api/file/[controller]")]
+    [Route("api/doc/[controller]")]
     [ApiController]
     public class AccessController : ControllerBase
     {

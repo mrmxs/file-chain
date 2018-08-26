@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Models;
-using API.Models.File;
+using API.Models.Doc;
 using API.Models.Wallet;
 using Microsoft.AspNetCore.Mvc;
 
