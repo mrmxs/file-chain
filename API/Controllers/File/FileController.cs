@@ -19,9 +19,9 @@ namespace API.Controllers.File
         {
             _configuration = configuration;
             _ipfsService = new IpfsService(
-                _configuration["IpfsApi:host"],
-                int.Parse(_configuration["IpfsApi:port"]),
-                _configuration["IpfsApi:protocol"]
+                _configuration["IPFS:API:host"],
+                int.Parse(_configuration["IPFS:API:port"]),
+                _configuration["IPFS:API:protocol"]
             );
         }
 
