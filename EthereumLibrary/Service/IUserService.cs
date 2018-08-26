@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using EthereumClassLibrary.Helper;
-using EthereumClassLibrary.Model;
+using EthereumLibrary.Helper;
+using EthereumLibrary.Model;
 
-namespace EthereumClassLibrary.Service
+namespace EthereumLibrary.Service
 {
     public interface IUserService
     {
@@ -10,7 +10,7 @@ namespace EthereumClassLibrary.Service
         bool Edit();
         bool Delete();
         
-        FileProperties Get(int? id, string wallet);
-        IEnumerable<FileProperties> Get(UserFilter fileFilter);
+        IEthereumFile Get(int? id, string wallet);
+        IEnumerable<IEthereumFile> Get(UserFilter fileFilter);
     }
 }

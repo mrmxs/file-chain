@@ -1,4 +1,4 @@
-﻿namespace EthereumClassLibrary.Helper
+﻿namespace EthereumLibrary.Helper
 {
     public class FilterHelper
     {

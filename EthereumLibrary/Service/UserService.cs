@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using EthereumClassLibrary.Helper;
-using EthereumClassLibrary.Model;
+using EthereumLibrary.Helper;
+using EthereumLibrary.Model;
 
-namespace EthereumClassLibrary.Service
+namespace EthereumLibrary.Service
 {
     public class UserService : IUserService
     {
@@ -21,12 +21,12 @@ namespace EthereumClassLibrary.Service
             throw new System.NotImplementedException();
         }
 
-        public FileProperties Get(int? id, string wallet)
+        public IEthereumFile Get(int? id, string wallet)
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<FileProperties> Get(UserFilter fileFilter)
+        public IEnumerable<IEthereumFile> Get(UserFilter fileFilter)
         {
             throw new System.NotImplementedException();
         }

@@ -1,4 +1,4 @@
-﻿namespace EthereumClassLibrary.Model
+﻿namespace EthereumLibrary.Model
 {
     public class User
     {

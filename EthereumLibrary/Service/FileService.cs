@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using EthereumClassLibrary.Helper;
-using EthereumClassLibrary.Model;
+using EthereumLibrary.Helper;
+using EthereumLibrary.Model;
 
-namespace EthereumClassLibrary.Service
+namespace EthereumLibrary.Service
 {
     public class FileService : IFileService
     {
@@ -21,17 +21,17 @@ namespace EthereumClassLibrary.Service
             throw new System.NotImplementedException();
         }
 
-        public FileProperties Get(int id)
+        public IEthereumFile Get(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public FileProperties Get(string ipfsHash)
+        public IEthereumFile Get(string ipfsHash)
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<FileProperties> Get(FileFilter fileFilter)
+        public IEnumerable<IEthereumFile> Get(FileFilter fileFilter)
         {
             throw new System.NotImplementedException();
         }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using EthereumClassLibrary.Helper;
-using EthereumClassLibrary.Model;
+using EthereumLibrary.Helper;
+using EthereumLibrary.Model;
 
-namespace EthereumClassLibrary.Service
+namespace EthereumLibrary.Service
 {
     public interface IFileService
     {
@@ -10,8 +10,8 @@ namespace EthereumClassLibrary.Service
         bool Edit();
         bool Delete();
         
-        FileProperties Get(int id);
-        FileProperties Get(string ipfsHash);
-        IEnumerable<FileProperties> Get(FileFilter fileFilter);
+        IEthereumFile Get(int id);
+        IEthereumFile Get(string ipfsHash);
+        IEnumerable<IEthereumFile> Get(FileFilter fileFilter);
     }
 }
