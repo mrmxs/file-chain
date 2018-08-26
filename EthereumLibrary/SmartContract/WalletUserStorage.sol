@@ -1,12 +1,6 @@
 pragma solidity ^0.4.24;
 
-contract WalletStorage {
-
-    address wallet;
-
-    constructor(address _wallet) public {
-        wallet = _wallet;
-    }
+library WalletStorage {
 
     struct WalletUser {
         string login; //todo bytes with fixed length
@@ -17,79 +11,101 @@ contract WalletStorage {
         bool isValue;
     }
 
-    uint usersCount;
-    mapping(string => WalletUser) users; // login => User
+    struct Data {
+        address wallet;
+        uint usersCount;
+        mapping(string => WalletUser) users; // login => User
+    }
+
+    function setWallet(Data storage self, address _wallet)
+    public {
+        // todo add payable
+        // todo some checks
+        self.wallet = _wallet;
+    }
 
     function addUser(
+        Data storage self,
         string _login,
         string _password,
         string _firstName,
         string _lastName,
         string _info
-    ) public returns (uint index){
+    )
+    public
+    returns (uint index) {
         // todo add payable
         // todo some checks
-        if (msg.sender != wallet) revert("UNSOFFICIENT PRIVILEGE");
-        if (users[_login].isValue) revert("LOGIN ALREADY EXISTS");
+        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (self.users[_login].isValue) revert("LOGIN ALREADY EXISTS");
 
-        users[_login] = WalletUser(
+        self.users[_login] = WalletUser(
             _login, keccak256(abi.encodePacked(_password)),
             _firstName, _lastName, _info,
             true
         );
 
-        return ++usersCount;
+        return ++self.usersCount;
     }
 
-    function getUser(string _login) public view returns (
+    function getUser(Data storage self, string _login)
+    public
+    view
+    returns (
         string login,
         string firstName,
         string lastName,
         string info
     ) {
-        if (!users[_login].isValue) revert("LOGIN DOESN'T EXIST");
+        if (!self.users[_login].isValue) revert("LOGIN DOESN'T EXIST");
 
         login = _login;
-        firstName = users[_login].firstName;
-        lastName = users[_login].lastName;
-        info = users[_login].info;
+        firstName = self.users[_login].firstName;
+        lastName = self.users[_login].lastName;
+        info = self.users[_login].info;
     }
 
     // todo only user its own can change info
-    function setName(string _login, string _password, string _firstName, string _lastName) public {
+    function setName(Data storage self,
+        string _login, string _password, string _firstName, string _lastName)
+    public {
         // todo add payable
         // todo some checks
-        if (msg.sender != wallet) revert("UNSOFFICIENT PRIVILEGE");
-        if (!users[_login].isValue) revert("NOT EXISTING INDEX");
-        if (keccak256(abi.encodePacked(_password)) != users[_login].passwordHash)
+        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
+        if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");
 
-        users[_login].firstName = _firstName;
-        users[_login].lastName = _lastName;
+        self.users[_login].firstName = _firstName;
+        self.users[_login].lastName = _lastName;
     }
 
     // todo only user its own can change info
-    function setInfo(string _login, string _password, string _info) public {
+    function setInfo(Data storage self,
+        string _login, string _password, string _info)
+    public {
         // todo add payable
         // todo some checks
-        if (msg.sender != wallet) revert("UNSOFFICIENT PRIVILEGE");
-        if (!users[_login].isValue) revert("NOT EXISTING INDEX");
-        if (keccak256(abi.encodePacked(_password)) != users[_login].passwordHash)
+        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
+        if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");
 
-        users[_login].info = _info;
+        self.users[_login].info = _info;
     }
 
     // todo only user its own can change password
     // todo and admin
-    function setPassword(string _login, string _password, string _newPassword) public {
+    function setPassword(Data storage self,
+        string _login, string _password, string _newPassword)
+    public {
         // todo add payable
         // todo some checks
-        if (msg.sender != wallet) revert("UNSOFFICIENT PRIVILEGE");
-        if (!users[_login].isValue) revert("NOT EXISTING INDEX");
-        if (keccak256(abi.encodePacked(_password)) != users[_login].passwordHash)
+        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
+        if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");
 
-        users[_login].passwordHash = keccak256(abi.encodePacked(_newPassword));
+        self.users[_login].passwordHash = keccak256(abi.encodePacked(_newPassword));
     }
 }

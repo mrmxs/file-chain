@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-contract IpfsFileStorage {
+library IpfsFileStorage {
 
     struct IpfsFile {
         string mimeType;
@@ -15,10 +15,18 @@ contract IpfsFileStorage {
         bool isValue;
     }
 
-    uint filesCount;
-    mapping(uint => IpfsFile) files;
+    struct Data {
+        uint filesCount;
+        mapping(uint => IpfsFile) files;
+    }
+
+    modifier existed (Data storage _self, uint _index) {
+        if (!contains(_self, _index)) revert("NOT EXISTING INDEX");
+        _;
+    }
 
     function addIpfsFileToStorage(
+        Data storage _self,
         string _mimeType,
         uint _size,
         string _ipfsHash,
@@ -28,19 +36,24 @@ contract IpfsFileStorage {
         uint _created,
         uint _accessed,
         uint _modified
-    ) public returns (uint index){
+    )
+    public
+    returns (uint index){
         // todo add payable
         // todo some checks
-        files[++filesCount] = IpfsFile(
+        _self.files[++_self.filesCount] = IpfsFile(
             _mimeType, _size, _ipfsHash, _name, _description, _isActive,
             _created, _accessed, _modified, true
         );
 
-        return filesCount;
+        return _self.filesCount;
     }
 
     // todo modifier owner+editors+viewers
-    function getIpfsFile(uint _index) public returns (
+    function getIpfsFile(Data storage _self, uint _index)
+    public
+    existed (_self, _index)
+    returns (
         string mimeType,
         uint size,
         string ipfsHash,
@@ -51,39 +64,44 @@ contract IpfsFileStorage {
         uint accessed,
         uint modified
     ) {
-        if (!files[_index].isValue) revert("NOT EXISTING INDEX");
-        
-        files[_index].accessed = now;
+        _self.files[_index].accessed = now;
         //todo should it be payable?
 
-        mimeType = files[_index].mimeType;
-        size = files[_index].size;
-        ipfsHash = files[_index].ipfsHash;
-        name = files[_index].name;
-        description = files[_index].description;
-        isActive = files[_index].isActive;
-        created = files[_index].created;
-        accessed = files[_index].accessed;
-        modified = files[_index].modified;
+        mimeType = _self.files[_index].mimeType;
+        size = _self.files[_index].size;
+        ipfsHash = _self.files[_index].ipfsHash;
+        name = _self.files[_index].name;
+        description = _self.files[_index].description;
+        isActive = _self.files[_index].isActive;
+        created = _self.files[_index].created;
+        accessed = _self.files[_index].accessed;
+        modified = _self.files[_index].modified;
     }
 
     // todo modifier owner+editors
-    function setName(uint _index, string _value) public {
+    function setName(Data storage _self, uint _index, string _value)
+    public 
+    existed (_self, _index) {
         // todo add payable
         // todo some checks
-        if (!files[_index].isValue) revert("NOT EXISTING INDEX");
-
-        files[_index].name = _value;
-        files[_index].modified = now;
+        _self.files[_index].name = _value;
+        _self.files[_index].modified = now;
     }
 
     // todo modifier owner+editors
-    function setDescription(uint _index, string _value) public {
+    function setDescription(Data storage _self, uint _index, string _value)
+    public
+    existed (_self, _index) {
         // todo add payable
         // todo some checks
-        if (!files[_index].isValue) revert("NOT EXISTING INDEX");
+        _self.files[_index].description = _value;
+        _self.files[_index].modified = now;
+    }
 
-        files[_index].description = _value;
-        files[_index].modified = now;
+    function contains(Data storage _self, uint _index)
+    public
+    view
+    returns (bool result) {
+        return _self.files[_index].isValue;
     }
 }
