@@ -10,6 +10,10 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RequestStub\api-file-post.json" />
+    <Folder Include="Ethereum" />
+    <Folder Include="IPFS" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="API\RequestStub\api-file-post.json" />
   </ItemGroup>
 </Project>
