@@ -33,18 +33,16 @@ contract IpfsFileStorage {
         uint _size,
         string _ipfsHash,
         string _name,
-        string _description,
-        uint _created,
-        uint _accessed,
-        uint _modified
+        string _description
     )
     public
     returns (uint index){
         // todo add payable
         // todo some checks
+        uint created = now;
         files[++filesCount] = IpfsFile(
             _mimeType, _size, _ipfsHash, _name, _description,
-            msg.sender, _created, _accessed, _modified, true
+            msg.sender, created, created, created, true
         );
 
         return filesCount;
