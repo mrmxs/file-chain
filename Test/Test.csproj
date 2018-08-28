@@ -24,5 +24,9 @@
   <ItemGroup>
     <Content Include="API\RequestStub\api-file-post.json" />
     <None Remove="SmartContract\IPFS\contract-address" />
+    <None Remove="SmartContract\UserStorageContract\contract-address" />
+    <Content Include="SmartContract\UserStorageContract\contract-address">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
