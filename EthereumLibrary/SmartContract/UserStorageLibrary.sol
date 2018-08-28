@@ -26,7 +26,7 @@ library UserStorage {
     }
 
     modifier owned (Data storage _self, uint _index) {
-        if (msg.sender != _self.users[_index].wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != _self.users[_index].wallet) revert("INSUFFICIENT PRIVILEGES");
         _;
     }
 

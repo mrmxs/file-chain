@@ -36,7 +36,7 @@ library WalletStorage {
     returns (uint index) {
         // todo add payable
         // todo some checks
-        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != self.wallet) revert("INSUFFICIENT PRIVILEGES");
         if (self.users[_login].isValue) revert("LOGIN ALREADY EXISTS");
 
         self.users[_login] = WalletUser(
@@ -71,7 +71,7 @@ library WalletStorage {
     public {
         // todo add payable
         // todo some checks
-        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != self.wallet) revert("INSUFFICIENT PRIVILEGES");
         if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
         if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");
@@ -86,7 +86,7 @@ library WalletStorage {
     public {
         // todo add payable
         // todo some checks
-        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != self.wallet) revert("INSUFFICIENT PRIVILEGES");
         if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
         if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");
@@ -101,7 +101,7 @@ library WalletStorage {
     public {
         // todo add payable
         // todo some checks
-        if (msg.sender != self.wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != self.wallet) revert("INSUFFICIENT PRIVILEGES");
         if (!self.users[_login].isValue) revert("NOT EXISTING INDEX");
         if (keccak256(abi.encodePacked(_password)) != self.users[_login].passwordHash)
             revert("WRONG CREDENTIALS");

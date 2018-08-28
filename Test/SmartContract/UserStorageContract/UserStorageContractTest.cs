@@ -280,10 +280,10 @@ namespace Test.SmartContract.UserStorageContract
             // 2. not admin user trying change password of the another user
             // should be exception 
             
-            Assert.Throws<AggregateException>(() => UNSOFFICIENT_PRIVILEGE().Wait());
+            Assert.Throws<AggregateException>(() => INSUFFICIENT_PRIVILEGES().Wait());
         }
 
-        private async Task UNSOFFICIENT_PRIVILEGE()
+        private async Task INSUFFICIENT_PRIVILEGES()
         {
             var transactionHash = await _service.SetPasswordAsAdminAsync(SenderAddress,
                 Stub.UserLogin1, Stub.UserPassword1, Stub.AdminLogin, Stub.UserPassword2,

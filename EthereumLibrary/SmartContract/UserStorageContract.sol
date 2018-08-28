@@ -17,7 +17,7 @@ contract UserStorage {
     mapping(bytes32 => User) users; // login => User
 
     modifier walletowner {
-        if (msg.sender != wallet) revert("UNSOFFICIENT PRIVILEGE");
+        if (msg.sender != wallet) revert("INSUFFICIENT PRIVILEGES");
         _;
     }
 
@@ -37,7 +37,7 @@ contract UserStorage {
     }
 
     modifier asadmin (bytes32 _login) {
-        if (!users[_login].isAdmin) revert("UNSOFFICIENT PRIVILEGE");
+        if (!users[_login].isAdmin) revert("INSUFFICIENT PRIVILEGES");
         _;
     }
    

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-contract IpfsFileStorage2 {
+contract IpfsFileStorage {
 
     struct IpfsFile {
         bytes32 mimeType;

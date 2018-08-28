@@ -112,7 +112,6 @@ namespace Test.SmartContract.IpfsFileStorageContract
 
             var fileContent = await _service.GetAsyncCall(2);
 
-            //TODO string conversion
             Assert.Equal("testimage.jpeg", fileContent.ToReadable().Name);
         }
 
