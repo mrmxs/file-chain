@@ -1,0 +1,10 @@
+IpfsFileStorageContract / add
+
+type       | prop | transaction cost
+-----------+------+-----------------
+bytes      | name | 657742 
+bytes32[3] | name | 635700
+-----------+------+-----------------
+bytes      | desc | 635700
+bytes32[6] | desc | 347820
+------------------------------------
