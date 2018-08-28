@@ -110,10 +110,10 @@ namespace Test.SmartContract.IpfsFileStorageContract
             _contract = _web3.Eth.GetContract(IpfsFileStorageService.Abi, ContractAddress);
             _service = new IpfsFileStorageService(_web3, ContractAddress);
 
-            var fileContent = await _service.GetAsyncCall(1);
+            var fileContent = await _service.GetAsyncCall(2);
 
             //TODO string conversion
-            Assert.Equal("testimage.jpeg", fileContent. /*ToReadable().*/Name.ToString());
+            Assert.Equal("testimage.jpeg", fileContent.ToReadable().Name);
         }
 
         [Fact]
@@ -122,17 +122,21 @@ namespace Test.SmartContract.IpfsFileStorageContract
             _contract = _web3.Eth.GetContract(IpfsFileStorageService.Abi, ContractAddress);
             _service = new IpfsFileStorageService(_web3, ContractAddress);
 
+            var id = 1;
+            var old = await _service.GetAsyncCall(id);
+            
             var newName = "new-image-name.jpeg";
             var timestamp = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            await _service.SetNameAsync(SenderAddress,
+            
+            var transactionHash = await _service.SetNameAsync(SenderAddress,
                 1, CastHelper.StringToBytes32ArrayOf(3, newName), timestamp,
                 new HexBigInteger(500000));
-            var updated = await _service.GetAsyncCall(1);
+            var receipt = await _service.MineAndGetReceiptAsync(transactionHash);
+            
+            var updated = await _service.GetAsyncCall(id);
 
-            //TODO sring conversion
-            Assert.Equal(newName, updated. /*ToReadable().*/Name.ToString());
-            Assert.Equal(timestamp, updated. /*ToReadable().*/Modified);
+            Assert.Equal(newName, updated.ToReadable().Name);
+            Assert.Equal(timestamp, updated.Modified);
         }
 
         [Fact]
@@ -141,17 +145,21 @@ namespace Test.SmartContract.IpfsFileStorageContract
             _contract = _web3.Eth.GetContract(IpfsFileStorageService.Abi, ContractAddress);
             _service = new IpfsFileStorageService(_web3, ContractAddress);
 
+            var id = 1;
+            var old = await _service.GetAsyncCall(id);
+            
             var newDescription = "this image really makes sence";
             var timestamp = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            await _service.SetDescriptionAsync(SenderAddress,
+            var transactionHash = await _service.SetDescriptionAsync(SenderAddress,
                 1, CastHelper.StringToBytes32ArrayOf(6, newDescription), timestamp,
                 new HexBigInteger(500000));
+            var receipt = await _service.MineAndGetReceiptAsync(transactionHash);
+            
             var updated = await _service.GetAsyncCall(1);
 
-            //TODO string conversion
-            Assert.Equal(newDescription, updated. /*ToReadable().*/Description.ToString());
-            Assert.Equal(timestamp, updated. /*ToReadable().*/Modified);
+            Assert.Equal(newDescription, updated.ToReadable().Description);
+            Assert.Equal(timestamp, updated.Modified);
         }
     }
 }

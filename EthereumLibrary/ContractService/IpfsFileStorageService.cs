@@ -71,7 +71,7 @@ namespace EthereumLibrary.ContractService
             var function = GetFunctionContains();
             return function.CallAsync<bool>(_index);
         }
-
+       
         public Task<GetDTO> GetAsyncCall(BigInteger _index) {
             var function = GetFunctionGet();
             return function.CallDeserializingToObjectAsync<GetDTO>(_index);
@@ -82,48 +82,39 @@ namespace EthereumLibrary.ContractService
     public class GetDTO 
     {
         [Parameter("bytes32", "mimeType", 1)]
-        public byte[] MimeType {get; set;}
-//
-//        [Parameter("bytes32[2]", "ipfsHash", 2)]
-//        public byte[][] IpfsHash {get; set;}
+        public string MimeType {get; set;}
 
         [Parameter("bytes32[2]", "ipfsHash", 2)]
-        public List<byte> IpfsHash {get; set;}
-//
+        public List<string> IpfsHash {get; set;}
+
         [Parameter("bytes32", "size", 3)]
-        public byte[] Size {get; set;}
-//
-//        [Parameter("bytes32[3]", "name", 4)]
-//        public byte[][] Name {get; set;}
+        public string Size {get; set;}
         
         [Parameter("bytes32[3]", "name", 4)]
-        public List<byte> Name {get; set;}
-//
-//        [Parameter("bytes32[6]", "description", 5)]
-//        public byte[][] Description {get; set;}
+        public List<string> Name {get; set;}
 
         [Parameter("bytes32[6]", "description", 5)]
-        public List<byte> Description {get; set;}
-//
+        public List<string> Description {get; set;}
+
         [Parameter("uint32", "created", 6)]
-        public int Created {get; set;}
+        public long Created {get; set;}
 
         [Parameter("uint32", "modified", 7)]
-        public int Modified {get; set;}
+        public long Modified {get; set;}
         
-//        public ReadableGetDTO ToReadable()
-//        {
-//            return new ReadableGetDTO
-//            {
-//                MimeType = CastHelper.Bytes32ToString(this.MimeType.ToArray()),
-//                IpfsHash = CastHelper.Bytes32ArrayToString(this.IpfsHash.ToArray()),
-//                Size = CastHelper.Bytes32ToString(this.Size.ToArray()),
-//                Name = CastHelper.Bytes32ArrayToString(this.Name.ToArray()),
-//                Description = CastHelper.Bytes32ArrayToString(this.Description.ToArray()),
-//                Created = new DateTime(this.Created),
-//                Modified = new DateTime(this.Modified),
-//            };
-//        }
+        public ReadableGetDTO ToReadable()
+        {
+            return new ReadableGetDTO
+            {
+                MimeType = MimeType,
+                IpfsHash = String.Join<string>("", IpfsHash.ToArray()),
+                Size = Size,
+                Name = String.Join<string>("", Name.ToArray()),
+                Description = String.Join<string>("", Description.ToArray()),
+                Created = new DateTime(this.Created),
+                Modified = new DateTime(this.Modified),
+            };
+        }
     }
     
     
