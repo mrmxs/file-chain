@@ -25,6 +25,7 @@ GET /api/file?type=\<type\> - файлы типа
   "type": "image/jpeg",
   "size": 123454,
   "description": "description",
+  "link": "http://ipfs",
   "modified": "2018-08-29T13:17:31.349Z",
   "created": "2018-08-29T13:17:31.349Z"
 },
@@ -34,6 +35,7 @@ GET /api/file?type=\<type\> - файлы типа
   "type": "image/jpeg",
   "size": 123454,
   "description": "description",
+  "link": "http://ipfs",
   "modified": "2018-08-29T13:17:31.349Z",
   "created": "2018-08-29T13:17:31.349Z"
 }]
@@ -47,7 +49,7 @@ GET /api/file/1 - инфо о файле
   "type": "image/jpeg",
   "size": 123454,
   "description": "description",
-  "link": "http://ipfs"
+  "link": "http://ipfs",
   "modified": "2018-08-29T13:17:31.349Z",
   "created": "2018-08-29T13:17:31.349Z"
 }
