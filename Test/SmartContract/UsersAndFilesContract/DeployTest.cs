@@ -9,44 +9,24 @@ using Stub = Test.SmartContract.Stubs.UserStorageContractTestStub;
 
 namespace Test.SmartContract.UsersAndFilesContract
 {
-    public class DeployTest
+    public class DeployTest : AbstractSmartContractTest
     {
-        private const string RcpClientUrl = "http://127.0.0.1:7545";
-        private const string SenderAddress = "0x2042a043c2b9c56906ae1dbbda5b8b0d6f3ee2c3";
-        private const string SenderAddress2 = "0xa9aee256679649cee48c974081a4e5bfce48d17d";
-        private const string Password = "";
-
-        private Web3Geth _web3;
         private UsersAndFilesService _service;
-        private Contract _contract;
-        private readonly string _storedContractAddressPath = @".\SmartContract\UsersAndFilesContract\contract-address";
-        private readonly string _storedLibraryAddressPath = @".\SmartContract\UsersAndFilesContract\library-address";
-
-        private string LibraryAddress
-        {
-            get => File.Exists(_storedLibraryAddressPath)
-                ? File.ReadAllText(_storedLibraryAddressPath)
-                : "";
-            set => File.WriteAllText(_storedLibraryAddressPath, value);
-        }
-        private string ContractAddress
-        {
-            get => File.Exists(_storedContractAddressPath)
-                ? File.ReadAllText(_storedContractAddressPath)
-                : "";
-            set => File.WriteAllText(_storedContractAddressPath, value);
-        }
 
         public DeployTest()
         {
             _web3 = new Web3Geth(RcpClientUrl);
+            StoredContractAddressPath = @".\SmartContract\UsersAndFilesContract\contract-address";
+            StoredLibraryAddressPath = @".\SmartContract\UsersAndFilesContract\library-address";
         }
-
 
         /// <summary>
         /// Deploy contract. When creating, add admin user.
         /// Save contractAddress. 
         /// Check that admin exist in user mapping
+        ///
+        /// "gasUsed": "0xc1806" -> 792582
+        /// 
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -60,7 +40,7 @@ namespace Test.SmartContract.UsersAndFilesContract
             // 2. Deploy library
             var transactionHash =
                 await UsersAndFilesService.DeployLibraryAsync(_web3,
-                    SenderAddress, new HexBigInteger(60000000000));
+                    SenderAddress, Gas);
             var receipt = await UsersAndFilesService.MineAndGetReceiptAsync(_web3, transactionHash);
 
             LibraryAddress = receipt.ContractAddress;
@@ -73,6 +53,9 @@ namespace Test.SmartContract.UsersAndFilesContract
         /// Deploy contract. When creating, add admin user.
         /// Save contractAddress. 
         /// Check that admin exist in user mapping
+        /// 
+        /// "gasUsed": "0x28db7d" -> 2677629
+        /// 
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -94,7 +77,7 @@ namespace Test.SmartContract.UsersAndFilesContract
                     Stub.FirstName1,
                     Stub.LastName1,
                     Stub.Info1,
-                    new HexBigInteger(60000000000));
+                    Gas);
             var receipt = await UsersAndFilesService.MineAndGetReceiptAsync(_web3, transactionHash);
 
             ContractAddress = receipt.ContractAddress;
