@@ -1,23 +1,21 @@
 pragma solidity ^0.4.24;
 
-library IpfsFileStorage {
+library IpfsFileStorageLibrary {
 
     struct IpfsFile {
-        string mimeType;
-        uint size;
-        string ipfsHash;
-        string name;        // set
-        string description; // set
-        bool isActive;      // set
-        uint created;
-        uint accessed;      // internal set
-        uint modified;      // internal set
+        bytes32 mimeType;
+        bytes32[2] ipfsHash;
+        bytes32 size;
+        bytes32[3] name;        // set
+        bytes32[6] description; // set
+        uint32 created;
+        uint32 modified;        // internal set
         bool isValue;
     }
 
-    struct Data {
-        uint filesCount;
+    struct Data{
         mapping(uint => IpfsFile) files;
+        uint maxindex;
     }
 
     modifier existed (Data storage _self, uint _index) {
@@ -25,83 +23,104 @@ library IpfsFileStorage {
         _;
     }
 
-    function addIpfsFileToStorage(
-        Data storage _self,
-        string _mimeType,
-        uint _size,
-        string _ipfsHash,
-        string _name,
-        string _description,
-        bool _isActive,
-        uint _created,
-        uint _accessed,
-        uint _modified
-    )
+    function contains (Data storage _self, uint _index)
     public
-    returns (uint index){
-        // todo add payable
-        // todo some checks
-        _self.files[++_self.filesCount] = IpfsFile(
-            _mimeType, _size, _ipfsHash, _name, _description, _isActive,
-            _created, _accessed, _modified, true
-        );
-
-        return _self.filesCount;
+    view
+    returns (bool result) {
+        return _self.files[_index].isValue;
     }
 
-    // todo modifier owner+editors+viewers
-    function getIpfsFile(Data storage _self, uint _index)
+    function add (
+        Data storage _self,
+        bytes32 _mimeType,
+        bytes32[2] _ipfsHash,
+        bytes32 _size,
+        bytes32[3] _name,
+        bytes32[6] _description,
+        uint32 timestamp
+    )
     public
+    returns (uint) {
+        _self.maxindex++;
+        _self.files[_self.maxindex] = IpfsFile(
+            _mimeType,
+            _ipfsHash,
+            _size,
+            _name,
+            _description,
+            timestamp,
+            timestamp,
+            true
+        );
+
+        return _self.maxindex;
+    }
+
+    function get (Data storage _self, uint _index)
+    public
+    view
     existed (_self, _index)
     returns (
-        string mimeType,
-        uint size,
-        string ipfsHash,
-        string name,
-        string description,
-        bool isActive,
-        uint created,
-        uint accessed,
-        uint modified
+        bytes32 mimeType,
+        bytes32[2] ipfsHash,
+        bytes32 size,
+        bytes32[3] name,
+        bytes32[6] description,
+        uint32 created,
+        uint32 modified
     ) {
-        _self.files[_index].accessed = now;
-        //todo should it be payable?
-
         mimeType = _self.files[_index].mimeType;
         size = _self.files[_index].size;
         ipfsHash = _self.files[_index].ipfsHash;
         name = _self.files[_index].name;
         description = _self.files[_index].description;
-        isActive = _self.files[_index].isActive;
         created = _self.files[_index].created;
-        accessed = _self.files[_index].accessed;
         modified = _self.files[_index].modified;
     }
 
-    // todo modifier owner+editors
-    function setName(Data storage _self, uint _index, string _value)
-    public 
-    existed (_self, _index) {
-        // todo add payable
-        // todo some checks
-        _self.files[_index].name = _value;
-        _self.files[_index].modified = now;
-    }
-
-    // todo modifier owner+editors
-    function setDescription(Data storage _self, uint _index, string _value)
-    public
-    existed (_self, _index) {
-        // todo add payable
-        // todo some checks
-        _self.files[_index].description = _value;
-        _self.files[_index].modified = now;
-    }
-
-    function contains(Data storage _self, uint _index)
+    function get1 (Data storage _self, uint _index)
     public
     view
-    returns (bool result) {
-        return _self.files[_index].isValue;
+    existed (_self, _index)
+    returns (
+        bytes32 mimeType,
+        bytes32[2] ipfsHash,
+        bytes32 size,
+        bytes32[3] name
+    ) {
+        mimeType = _self.files[_index].mimeType;
+        size = _self.files[_index].size;
+        ipfsHash = _self.files[_index].ipfsHash;
+        name = _self.files[_index].name;
+    }
+
+    function get2 (Data storage _self, uint _index)
+    public
+    view
+    existed (_self, _index)
+    returns (
+        bytes32[6] description,
+        uint32 created,
+        uint32 modified
+    ) {
+        description = _self.files[_index].description;
+        created = _self.files[_index].created;
+        modified = _self.files[_index].modified;
+    }
+
+    function setName (Data storage _self, uint _index, bytes32[3] _value, uint32 timestamp)
+    public
+    existed (_self, _index) {
+        // todo add payable
+        _self.files[_index].name = _value;
+        _self.files[_index].modified = timestamp;
+    }
+
+    function setDescription(Data storage _self, uint _index, bytes32[6] _value, uint32 timestamp)
+    public
+    existed (_self, _index) {
+        // todo add payable
+        _self.files[_index].description = _value;
+        _self.files[_index].modified = timestamp;
     }
 }
