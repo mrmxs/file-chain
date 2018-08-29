@@ -9,9 +9,9 @@ using Nethereum.Hex.HexTypes;
 using Xunit;
 using Stub = Test.SmartContract.Stubs.UserStorageContractTestStub;
 
-namespace Test.SmartContract.UserStorageContract
+namespace Test.SmartContract.UsersAndFilesContract
 {
-    public class UserStorageContractTest
+    public class UserTest
     {
         private const string RcpClientUrl = "http://127.0.0.1:7545";
         private const string SenderAddress = "0xe108b9f29929287fa7522daecea7b79d8ed6fdd6";
@@ -19,9 +19,9 @@ namespace Test.SmartContract.UserStorageContract
         private const string Password = "";
 
         private Web3Geth _web3;
-        private UserStorageService _service;
+        private UsersAndFilesService _service;
         private Contract _contract;
-        private readonly string _storedContractAddressPath = @".\SmartContract\UserStorageContract\contract-address";
+        private readonly string _storedContractAddressPath = @".\SmartContract\UsersAndFilesContract\contract-address";
 
         private string ContractAddress
         {
@@ -31,48 +31,9 @@ namespace Test.SmartContract.UserStorageContract
             set => File.WriteAllText(_storedContractAddressPath, value);
         }
 
-        public UserStorageContractTest()
+        public UserTest()
         {
             _web3 = new Web3Geth(RcpClientUrl);
-        }
-
-        /// <summary>
-        /// Deploy contract. When creating, add admin user.
-        /// Save contractAddress. 
-        /// Check that admin exist in user mapping
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        public async Task T1_DeployContractAndCallFunction()
-        {
-            // 1. Unclock Account
-            var unlockRes = await _web3.Personal.UnlockAccount.SendRequestAsync(
-                SenderAddress, Password, new HexBigInteger(120));
-            Assert.True(unlockRes);
-
-            // 2. Deploy contract
-            var transactionHash =
-                await UserStorageService.DeployContractAsync(_web3,
-                    SenderAddress,
-                    Stub.AdminLogin,
-                    Stub.AdminPassword,
-                    Stub.FirstName1,
-                    Stub.LastName1,
-                    Stub.Info1,
-                    new HexBigInteger(2000000));
-
-            // 3. Get contract receipt & contractAddress, save contractAdress to file
-            var receipt = await UserStorageService.MineAndGetReceiptAsync(_web3, transactionHash);
-
-            // 4. Call contract function
-            ContractAddress = receipt.ContractAddress;
-
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-
-            _service = new UserStorageService(_web3, ContractAddress);
-
-            var responce = await _service.ContainsAsyncCall(Stub.AdminLogin);
-            Assert.True(responce);
         }
 
         /// <summary>
@@ -82,8 +43,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T2_ContainsFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             var responce = await _service.ContainsAsyncCall(Stub.AdminLogin);
 
@@ -97,8 +58,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T3_AddFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             var param = new
             {
@@ -133,8 +94,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T4_GetFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             var user = await _service.GetAsyncCall(Stub.UserLogin1);
 
@@ -152,8 +113,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T5_SetNameFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             var old = await _service.GetAsyncCall(Stub.UserLogin1);
 
@@ -183,8 +144,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T6_SetInfoFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             var old = await _service.GetAsyncCall(Stub.UserLogin1);
 
@@ -210,8 +171,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T7_SetPasswordFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             // trying change password, should be Ok  
             var transactionHash = await ChangePassFromTo(Stub.UserPassword1, Stub.UserPassword2);
@@ -240,8 +201,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T8_SetPasswordAsAdminFunction_Accessed()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             // 1. user is admin
             var user = await _service.GetAsyncCall(Stub.AdminLogin);
@@ -270,8 +231,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T9_SetPasswordAsAdminFunction_Denied()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             // 1. user is not admin
             var user = await _service.GetAsyncCall(Stub.UserLogin1);
@@ -299,8 +260,8 @@ namespace Test.SmartContract.UserStorageContract
         [Fact]
         public async Task T10_SetAdminFunction()
         {
-            _contract = _web3.Eth.GetContract(UserStorageService.Abi, ContractAddress);
-            _service = new UserStorageService(_web3, ContractAddress);
+            _contract = _web3.Eth.GetContract(UsersAndFilesService.Abi, ContractAddress);
+            _service = new UsersAndFilesService(_web3, ContractAddress);
 
             // 1. user is not admin
             var user = await _service.GetAsyncCall(Stub.UserLogin1);
