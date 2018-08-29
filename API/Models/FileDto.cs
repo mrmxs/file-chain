@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace API.Models.Doc
+namespace API.Models
 {
-    public class PropertyDto
+    public class DocDto
     {
         public int? Id { get; set; }
         public string Name { get; set; }
@@ -13,9 +13,9 @@ namespace API.Models.Doc
         public DateTime? EditedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         
-        public static PropertyDto Stub()
+        public static DocDto Stub()
         {
-            return new PropertyDto
+            return new DocDto
             {
                 Id = 4,
                 Name = "Test.doc",
