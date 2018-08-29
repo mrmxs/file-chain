@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using API.Models.Doc;
+using API.Models;
 using IPFSLibrary.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace API.Controllers.Doc
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DocController : ControllerBase
+    public class FileController : ControllerBase
     {
         private IConfiguration _configuration;
         private IIpfsService _ipfsService;
 
-        public DocController(IConfiguration configuration)
+        public FileController(IConfiguration configuration)
         {
             _configuration = configuration;
             _ipfsService = new IpfsService(
@@ -27,23 +27,23 @@ namespace API.Controllers.Doc
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<DocDto>> Get()
+        public ActionResult<IEnumerable<FileDto>> Get()
         {
             throw new NotImplementedException();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<DocDto> Get(int id)
+        public ActionResult<FileDto> Get(int id)
         {
             throw new NotImplementedException();
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody] DocDto file)
+        public IActionResult Post([FromBody] FileDto file)
         {
-            var filePath = file.Source.Path;
+            var filePath = file.Link;
 
             if (System.IO.File.Exists(filePath)) return BadRequest("Wrong file path");
 
@@ -59,7 +59,7 @@ namespace API.Controllers.Doc
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] DocDto value)
+        public IActionResult Put(int id, [FromBody] FileDto value)
         {
             throw new NotImplementedException();
         }

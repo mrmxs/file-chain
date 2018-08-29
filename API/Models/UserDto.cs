@@ -1,20 +1,22 @@
-﻿namespace API.Models.User
+﻿namespace API.Models
 {
     public class UserDto
     {
-        public int Id { get; set; }
-        public string EthereumWallet { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Info { get; set; }
         
         public static UserDto Stub()
         {
             return new UserDto
             {
-                Id = 125,
-                EthereumWallet = "xxxxx",
+                Login = "johndoe",
+                Password= "",
                 FirstName = "John",
-                LastName = "Doe"
+                LastName = "Doe",
+                Info = "xxxxx",
             };
         }
     }
