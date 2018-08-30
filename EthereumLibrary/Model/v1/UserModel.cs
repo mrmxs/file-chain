@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 
-namespace EthereumLibrary.Model
+namespace EthereumLibrary.Model.v1
 {
     [FunctionOutput]
     public class UserDto 
