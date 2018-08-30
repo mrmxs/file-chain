@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using EthereumLibrary.Helper;
-using EthereumLibrary.Model;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Contracts;
 using Nethereum.Geth;
+using UserDto = EthereumLibrary.Model.v1.UserDto;
 
 namespace EthereumLibrary.ContractService
 {

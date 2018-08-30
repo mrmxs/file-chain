@@ -1,11 +1,11 @@
 using System.Numerics;
 using System.Threading.Tasks;
 using EthereumLibrary.Helper;
-using EthereumLibrary.Model.UsersAndFiles;
+using EthereumLibrary.Model;
 using Nethereum.Contracts;
 using Nethereum.Geth;
 using Nethereum.Hex.HexTypes;
-using UserDto = EthereumLibrary.Model.UsersAndFiles.UserDto;
+using UserDto = EthereumLibrary.Model.UserDto;
 
 namespace EthereumLibrary.ContractService
 {
@@ -94,6 +94,12 @@ namespace EthereumLibrary.ContractService
             var function = GetFunctionGetFileIds();
             return function.CallAsync<BigInteger[]>(_login, _password);
         }
+       public Task<BigInteger[]> GetFileIdsAsyncCall(string _login, string _password)
+       {
+           return GetFileIdsAsyncCall(
+               CastHelper.StringToBytes32(_login),
+               CastHelper.StringToBytes32(_password));
+       }
         public Task<byte[][]> SetFileNameAsyncCall(byte[] _login, byte[] _password, BigInteger _fileindex, byte[][] _value, int _timestamp) {
             var function = GetFunctionSetFileName();
             return function.CallAsync<byte[][]>(_login, _password, _fileindex, _value, _timestamp);

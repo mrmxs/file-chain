@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Numerics;
 using EthereumLibrary.Helper;
-using EthereumLibrary.Model;
+using EthereumLibrary.Model.v1;
 using Nethereum.Hex.HexTypes;
 using Nethereum.Contracts;
 using Nethereum.Geth;
