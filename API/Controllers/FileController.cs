@@ -40,7 +40,7 @@ namespace API.Controllers
 
             var web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
             var contractAddress = _configuration["Ethereum:ContractAddress"] as string;
-            var walletAddress = _configuration["Ethereum:WalletAddress"] as string;
+            var walletAddress = _configuration["Ethereum:Wallet:Address"] as string;
             var gas = long.Parse(_configuration["Ethereum:Gas"]);
 
             _ethereumFileService = new EthereumFileService(web3, contractAddress, walletAddress, gas);
@@ -70,6 +70,7 @@ namespace API.Controllers
 
         // GET api/file/5
         [HttpGet("{id}")]
+        [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<FileDto>> Get(BigInteger id)
         {
             var login = Request.Headers["X-Login"];
@@ -82,6 +83,7 @@ namespace API.Controllers
 
         // POST api/file
         [HttpPost]
+        [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<FileDto>> Post([FromBody] FileDto request)
         {
             var login = Request.Headers["X-Login"];
@@ -129,6 +131,7 @@ namespace API.Controllers
 
         // PUT api/file/5
         [HttpPut("{id}")]
+        [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<FileDto>> Put([FromBody] FileDto request)
         {
             var login = Request.Headers["X-Login"];
@@ -172,6 +175,7 @@ namespace API.Controllers
 
         // DELETE api/file/5
         [HttpDelete("{id}")]
+        [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult> Delete(BigInteger id)
         {
             var login = Request.Headers["X-Login"];
