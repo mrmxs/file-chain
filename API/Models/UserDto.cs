@@ -7,6 +7,7 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Info { get; set; }
+        public bool IsAdmin { get; set; }
         
         public static UserDto Stub()
         {
@@ -17,6 +18,7 @@
                 FirstName = "John",
                 LastName = "Doe",
                 Info = "xxxxx",
+                IsAdmin = false
             };
         }
     }

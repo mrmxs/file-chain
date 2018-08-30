@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Numerics;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace API.Models
 {
     public class FileDto
     {
-        public int? Id { get; set; }
+        public BigInteger? Id { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
         public long Size { get; set; }
