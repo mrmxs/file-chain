@@ -10,7 +10,7 @@ namespace EthereumLibrary.Service
         
         Task<IEthereumUser> AddAsyncCall(string login, string password, string firstName, string lastName, string info);
         
-        Task<bool> AuthenticateAsyncCall(string login, string password);
+        Task<bool> IsAuthenticatedAsyncCall(string login, string password);
         
         Task<bool> SetNameAsync(string login, string password, string firstName, string lastName, DateTime now);
         

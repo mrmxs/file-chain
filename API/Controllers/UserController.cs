@@ -81,9 +81,11 @@ namespace API.Controllers.User
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var user = await _ethereumUserService.AuthenticateAsyncCall(login, password);
+            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
 
-            return user;
+            if (!auth) return BadRequest(Errors.WRONG_CREDENTIALS);
+
+            return Ok();
         }
 
         /// <summary>
@@ -97,9 +99,9 @@ namespace API.Controllers.User
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var auth = await _ethereumUserService.AuthenticateAsyncCall(login, password);
+            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
 
-            if (!auth) return BadRequest(Errors.INSUFFICIENT_PRIVILEGES);
+            if (!auth) return BadRequest(Errors.WRONG_CREDENTIALS);
 
             var user = await _ethereumUserService.GetAsyncCall(login);
 
@@ -118,10 +120,10 @@ namespace API.Controllers.User
             var password = Request.Headers["X-Token"];
 
             if ((request.FirstName == "" || request.LastName == "") && request.Info == "")
-                return BadRequest("Required fields are missing");
+                return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
 
-            var auth = await _ethereumUserService.AuthenticateAsyncCall(login, password);
-            if (!auth) return BadRequest(Errors.INSUFFICIENT_PRIVILEGES);
+            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
+            if (!auth) return BadRequest(Errors.WRONG_CREDENTIALS);
 
             try
             {

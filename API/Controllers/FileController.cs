@@ -89,7 +89,7 @@ namespace API.Controllers
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password); // todo
+            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
             if (!auth) return BadRequest(Errors.WRONG_CREDENTIALS);
 
             var filePath = request.Link;

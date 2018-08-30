@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using EthereumLibrary.ContractService;
 using EthereumLibrary.Helper;
@@ -29,10 +30,19 @@ namespace EthereumLibrary.Service
             return user.ToReadable();
         }
 
-        public Task<bool> AuthenticateAsyncCall(string login, string password)
+        public async Task<bool> IsAuthenticatedAsyncCall(string login, string password)
         {
-            return new Task<bool>(() => false);
-            throw new NotImplementedException();
+            try
+            {
+                var responce = await _contractService.GetFileIdsAsyncCall(login, password);
+                return true;
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         public async Task<IEthereumUser> AddAsyncCall(string login, string password, string firstName, string lastName,
