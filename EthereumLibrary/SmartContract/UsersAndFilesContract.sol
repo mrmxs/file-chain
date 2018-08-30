@@ -2,7 +2,7 @@ pragma solidity ^0.4.24;
 
 import {IpfsFileStorageLibrary} from "./IpfsFileStorageLibrary.sol";
 
-contract UserToFiles {
+contract UsersAndFiles {
 
     struct User {
         bytes32 login;
