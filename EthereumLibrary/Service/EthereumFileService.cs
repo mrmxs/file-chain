@@ -4,7 +4,7 @@ using EthereumLibrary.Model;
 
 namespace EthereumLibrary.Service
 {
-    public class FileService : IFileService
+    public class EthereumFileService : IEthereumFileService
     {
         public bool Add()
         {
