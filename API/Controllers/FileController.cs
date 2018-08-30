@@ -38,6 +38,7 @@ namespace API.Controllers
                 _configuration["IPFS:API:protocol"]
             );
 
+            //todo get secure info from Environment Variables 
             var web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
             var contractAddress = _configuration["Ethereum:ContractAddress"] as string;
             var walletAddress = _configuration["Ethereum:Wallet:Address"] as string;
@@ -51,6 +52,9 @@ namespace API.Controllers
         /// <summary>
         /// GET api/file 
         /// GET api/file?type=image
+        /// 
+        /// Known file types:
+        /// "image", "audio", "video", "document", "archive"
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -63,9 +67,39 @@ namespace API.Controllers
 
             var files = await _ethereumFileService.GetAsyncCall(login, password);
 
-            // todo filter by types
+            var filtered = (string.IsNullOrEmpty(type))
+                ? files
+                : files.Where(file =>
+            {
+                var mimePart1 = file.MimeType.Split("/")[0];
+                switch (type.ToLower())
+                {
+                    case "image":
+                    case "audio":
+                    case "video":
+                        if (mimePart1 == type) return true;
+                        return false;
+                    case "document":
+                        if (new[]
+                        {
+                            "application/msword", 
+                            "application/pdf", 
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        }.Contains(file.MimeType)) return true;
+                        return false;
+                    case "archive":
+                        if (new[]
+                        {
+                            "application/x-rar-compressed", 
+                            "application/x-zip-compressed",
+                        }.Contains(file.MimeType)) return true;
+                        return false;
+                    default:
+                        return false;
+                }
+            });
 
-            return Ok(files.Select(ConvertToDto));
+            return Ok(filtered.Select(ConvertToDto));
         }
 
         // GET api/file/5
@@ -117,7 +151,7 @@ namespace API.Controllers
 
                     temp.Type = MimeType.GetMimeType(fileBytes.Take(50).ToArray(), filePath);
                 }
-                
+
                 var ipfsFile = _ipfsService.Add(temp.Name, fileStream);
                 temp.Link = ipfsFile.Hash;
             }
@@ -154,13 +188,15 @@ namespace API.Controllers
                     return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
 
                 if (request.Name != "")
-                    await _ethereumFileService.SetNameAsync(login, password, request.Id.Value, request.Name, DateTime.Now);
-                
+                    await _ethereumFileService.SetNameAsync(login, password, request.Id.Value, request.Name,
+                        DateTime.Now);
+
                 if (request.Description != "")
-                    await _ethereumFileService.SetDescriptionAsync(login, password, request.Id.Value, request.Description, DateTime.Now);
+                    await _ethereumFileService.SetDescriptionAsync(login, password, request.Id.Value,
+                        request.Description, DateTime.Now);
 
                 var file = await _ethereumFileService.GetAsyncCall(login, password, request.Id.Value);
-                
+
                 return Ok(ConvertToDto(file));
             }
             catch (Exception e)
