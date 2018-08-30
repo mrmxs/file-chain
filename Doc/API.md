@@ -65,6 +65,7 @@ POST /api/file - добавить  файл
 PUT /api/file/1 - редактировать файл
 ````
 {
+  "id": "id",
   "name": "name",
   "description": "description",
 }
@@ -99,5 +100,19 @@ PUT /api/user - редактировать профиль
   "firstname": "name",
   "lastname": "name",
   "info": "info",
+}
+````
+
+## Ok & BadRequest
+
+200 Ok()
+````
+{
+  "success": "File #4 was deleted",
+}
+````
+````
+{
+  "error": "Wrong credentials",
 }
 ````
