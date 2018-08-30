@@ -56,8 +56,9 @@ namespace IPFSLibrary.Service
                 var inputStream = new IpfsStream(name, stream);
 
                 var merkleNode = await ipfs.Add(inputStream).ConfigureAwait(false);
-                //TODO uncomment me in prod
-//                var multiHash = ipfs.Pin.Add(merkleNode.Hash.ToString());
+                
+                var multiHash = ipfs.Pin.Add(merkleNode.Hash.ToString());
+                
                 return merkleNode;
             }
         }
