@@ -1,15 +1,169 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using API.Models;
+using API.Utils;
+using EthereumLibrary.Model;
+using EthereumLibrary.Service;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Nethereum.Geth;
+using Nethereum.Hex.HexTypes;
+using UserDto = API.Models.UserDto;
 
 namespace API.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PropertiesController : ControllerBase
+    public class UserController : ControllerBase
     {
-        // GET
-        public IActionResult Index()
+        private IConfiguration _configuration;
+
+        private Web3Geth _web3;
+        private string _walletAddress;
+        private int _gas;
+        private IEthereumUserService _ethereumUserService;
+
+        public UserController(IConfiguration configuration)
         {
-            return Ok();
+            _configuration = configuration;
+
+            _web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
+            var contractAddress = _configuration["Ethereum:ContractAddress"] as string;
+            var walletAddress = _configuration["Ethereum:Wallet:Address"] as string;
+            var gas = long.Parse(_configuration["Ethereum:Gas"]);
+            _ethereumUserService = new EthereumUserService(_web3, contractAddress, walletAddress, gas);
+        }
+
+        /// <summary>
+        ///  Registation
+        ///  POST api/user
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult<UserProfileDto>> Post([FromBody] UserDto request)
+        {
+            try
+            {
+                var user = await _ethereumUserService.AddAsyncCall(
+                    request.Login, request.Password, request.FirstName, request.LastName, request.Info);
+
+                var userDto = ConvertToDto(user);
+                var walletDto = user.IsAdmin
+                    ? new WalletDto(
+                        _walletAddress,
+                        await _web3.Eth.GetBalance.SendRequestAsync(_walletAddress))
+                    : null;
+
+                return Ok(new UserProfileDto
+                    {
+                        user = userDto,
+                        wallet = walletDto
+                    });
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("LOGIN ALREADY EXISTS"))
+                    return BadRequest(Errors.LOGIN_ALREADY_EXISTS);
+
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        /// <summary>
+        ///  Login
+        ///  DELETE api/user
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        [HasHeader("X-Login,X-Token")]
+        public async Task<ActionResult<bool>> Delete()
+        {
+            var login = Request.Headers["X-Login"];
+            var password = Request.Headers["X-Token"];
+
+            var user = await _ethereumUserService.AuthenticateAsyncCall(login, password);
+
+            return user;
+        }
+
+        /// <summary>
+        ///  GET api/user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [HasHeader("X-Login,X-Token")]
+        public async Task<ActionResult<UserDto>> Get()
+        {
+            var login = Request.Headers["X-Login"];
+            var password = Request.Headers["X-Token"];
+
+            var auth = await _ethereumUserService.AuthenticateAsyncCall(login, password);
+
+            if (!auth) return BadRequest(Errors.INSUFFICIENT_PRIVILEGES);
+
+            var user = await _ethereumUserService.GetAsyncCall(login);
+
+            return Ok(ConvertToDto(user));
+        }
+
+        /// <summary>
+        ///  PUT api/user
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        [HasHeader("X-Login,X-Token")]
+        public async Task<ActionResult<UserDto>> Put([FromBody] UserDto request)
+        {
+            var login = Request.Headers["X-Login"];
+            var password = Request.Headers["X-Token"];
+
+            if ((request.FirstName == "" || request.LastName == "") && request.Info == "")
+                return BadRequest("Required fields are missing");
+
+            var auth = await _ethereumUserService.AuthenticateAsyncCall(login, password);
+            if (!auth) return BadRequest(Errors.INSUFFICIENT_PRIVILEGES);
+
+            try
+            {
+                if (request.FirstName != "" && request.LastName != "")
+                    await _ethereumUserService.SetNameAsync(
+                        login, password, request.FirstName, request.LastName, DateTime.Now);
+
+                if (request.Info != "")
+                    await _ethereumUserService.SetInfoAsync(login, password,
+                        request.Info, DateTime.Now);
+
+                var user = await _ethereumUserService.GetAsyncCall(login);
+
+                return Ok(ConvertToDto(user));
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("LOGIN DOESN'T EXIST"))
+                    return BadRequest(Errors.WRONG_CREDENTIALS);
+
+                if (e.Message.Contains("WRONG CREDENTIALS"))
+                    return BadRequest(Errors.WRONG_CREDENTIALS);
+
+                //only owner can edit
+                if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
+                    return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
+
+                return StatusCode(500);
+            }
+        }
+
+        private UserDto ConvertToDto(IEthereumUser user)
+        {
+            return new UserDto
+            {
+                Login = user.Login,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Info = user.Info,
+                IsAdmin = false
+            };
         }
     }
 }
