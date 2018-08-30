@@ -80,18 +80,28 @@ POST /api/user - зарегаться
 {
   "login": "login",
   "password": "password",
+  "firstname": "name",
+  "lastname": "name",
+  "info": "info",    <----- не обязательное
 }
 ````
 
-GET /api/user - инфо о профиле
+GET /api/user - инфо о профиле (инфо о кошельке тображается только админам)
 ````
 {
-  "login": "login",
-  "password": "",
-  "firstname": "name",
-  "lastname": "name",
-  "info": "info",
-  "isadmin": true
+  "user": {
+    "login": "login",
+    "password": "",
+    "firstname": "name",
+    "lastname": "name",
+    "info": "info",
+    "isadmin": true
+  },  
+  "wallet": {
+    "address": "0x1000000000",
+    "wei": "1000000000000",
+    "ether": "100"
+  }
 }
 ````
 
@@ -101,15 +111,6 @@ PUT /api/user - редактировать профиль
   "firstname": "name",
   "lastname": "name",
   "info": "info",
-}
-````
-
-### /api/wallet [For Admins only]
-
-GET /api/wallet
-````
-{
-  "ether": "26,257.232327964766057882",
 }
 ````
 
