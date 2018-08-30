@@ -9,6 +9,9 @@
     <PackageReference Include="Nethereum.Portable">
       <Version>3.0.0-rc1</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SmartContract\compiled\IpfsFileStorage.abi">
