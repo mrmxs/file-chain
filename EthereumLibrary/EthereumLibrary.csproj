@@ -3,6 +3,9 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Common.Logging.Core">
+      <Version>3.4.1</Version>
+    </PackageReference>
     <PackageReference Include="Nethereum.Portable">
       <Version>3.0.0-rc1</Version>
     </PackageReference>
