@@ -39,6 +39,21 @@ namespace EthereumLibrary.Helper
             return result;
         }
 
+        public static byte[][] ToUserNameType(string input)
+        {
+            return StringToBytes32ArrayOf(2, input);
+        }
+
+        public static byte[][] ToFileNameType(string input)
+        {
+            return StringToBytes32ArrayOf(3, input);
+        }
+
+        public static byte[][] ToDescriptionType(string input)
+        {
+            return StringToBytes32ArrayOf(6, input);
+        }
+
         public static string Bytes32ArrayToString(IEnumerable<byte[]> input)
         {
             return input.Aggregate("", (current, t) => current + t.ToStringFromRLPDecoded()).TrimEnd('\0');

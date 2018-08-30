@@ -14,13 +14,13 @@ namespace Test.SmartContract.Stubs
         public static byte[] UserPassword2 => CastHelper.StringToBytes32("asdfgh321");
         public static byte[] UserPassword3 => CastHelper.StringToBytes32("123456789");
 
-        public static byte[][] FirstName1 => CastHelper.StringToBytes32ArrayOf(2, "John");
-        public static byte[][] FirstName2 => CastHelper.StringToBytes32ArrayOf(2, "Jack");
+        public static byte[][] FirstName1 => CastHelper.ToUserNameType("John");
+        public static byte[][] FirstName2 => CastHelper.ToUserNameType("Jack");
 
-        public static byte[][] LastName1 => CastHelper.StringToBytes32ArrayOf(2, "Doe");
-        public static byte[][] LastName2 => CastHelper.StringToBytes32ArrayOf(2, "Smith");
+        public static byte[][] LastName1 => CastHelper.ToUserNameType("Doe");
+        public static byte[][] LastName2 => CastHelper.ToUserNameType("Smith");
 
-        public static byte[][] Info1 => CastHelper.StringToBytes32ArrayOf(6, "Cool test guy");
-        public static byte[][] Info2 => CastHelper.StringToBytes32ArrayOf(6, "The coolest test guy!");
+        public static byte[][] Info1 => CastHelper.ToDescriptionType("Cool test guy");
+        public static byte[][] Info2 => CastHelper.ToDescriptionType("The coolest test guy!");
     }
 }

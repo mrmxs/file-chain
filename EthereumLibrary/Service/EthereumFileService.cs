@@ -67,10 +67,10 @@ namespace EthereumLibrary.Service
                 Login = CastHelper.StringToBytes32(login),
                 Password = CastHelper.StringToBytes32(password),
                 Mime = CastHelper.StringToBytes32(type),
-                Hash = CastHelper.StringToBytes32ArrayOf(2, hash),
+                Hash = CastHelper.ToUserNameType(hash),
                 Size = CastHelper.StringToBytes32(size.ToString()),
-                Name = CastHelper.StringToBytes32ArrayOf(3, name),
-                Description = CastHelper.StringToBytes32ArrayOf(6, description),
+                Name = CastHelper.ToFileNameType(name),
+                Description = CastHelper.ToDescriptionType(description),
                 Timestamp = (int) ((DateTimeOffset) created).ToUnixTimeSeconds()
             };
 
@@ -106,7 +106,7 @@ namespace EthereumLibrary.Service
             {
                 Login = CastHelper.StringToBytes32(login),
                 Password = CastHelper.StringToBytes32(password),
-                Name = CastHelper.StringToBytes32ArrayOf(3, newName),
+                Name = CastHelper.ToFileNameType(newName),
                 Timestamp = (int) ((DateTimeOffset) modified).ToUnixTimeSeconds()
             };
 
@@ -123,7 +123,7 @@ namespace EthereumLibrary.Service
             {
                 Login = CastHelper.StringToBytes32(login),
                 Password = CastHelper.StringToBytes32(password),
-                Description = CastHelper.StringToBytes32ArrayOf(6, newDescription),
+                Description = CastHelper.ToDescriptionType(newDescription),
                 Timestamp = (int) ((DateTimeOffset) modified).ToUnixTimeSeconds()
             };
 

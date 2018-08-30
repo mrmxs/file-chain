@@ -105,9 +105,9 @@ namespace DeployApp
             {
                 login = CastHelper.StringToBytes32(admin[0]),
                 password = CastHelper.StringToBytes32(admin[1]),
-                firstName = CastHelper.StringToBytes32ArrayOf2(admin[2]),
-                lastName = CastHelper.StringToBytes32ArrayOf2(admin[3]),
-                info = CastHelper.StringToBytes32ArrayOf6(admin[4]),
+                firstName = CastHelper.ToUserNameType(admin[2]),
+                lastName = CastHelper.ToUserNameType(admin[3]),
+                info = CastHelper.ToDescriptionType(admin[4]),
             };
 
             Console.WriteLine($"\n  Admin:\n" +

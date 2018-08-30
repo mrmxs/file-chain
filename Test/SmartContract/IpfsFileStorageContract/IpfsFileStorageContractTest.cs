@@ -69,10 +69,10 @@ namespace Test.SmartContract.IpfsFileStorageContract
             var param = new
             {
                 Mime = CastHelper.StringToBytes32("image/jpeg"),
-                Hash = CastHelper.StringToBytes32ArrayOf(2, "obsjdkfhfowejkj"),
+                Hash = CastHelper.ToUserNameType("obsjdkfhfowejkj"),
                 Size = CastHelper.StringToBytes32(125000.ToString()),
-                Name = CastHelper.StringToBytes32ArrayOf(3, "testimage.jpeg"),
-                Description = CastHelper.StringToBytes32ArrayOf(6, "this is test image"),
+                Name = CastHelper.ToFileNameType("testimage.jpeg"),
+                Description = CastHelper.ToDescriptionType("this is test image"),
                 Timestamp = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             };
 
@@ -128,7 +128,7 @@ namespace Test.SmartContract.IpfsFileStorageContract
             var timestamp = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             
             var transactionHash = await _service.SetNameAsync(SenderAddress,
-                1, CastHelper.StringToBytes32ArrayOf(3, newName), timestamp,
+                1, CastHelper.ToFileNameType(newName), timestamp,
                 new HexBigInteger(500000));
             var receipt = await _service.MineAndGetReceiptAsync(transactionHash);
             
@@ -151,7 +151,7 @@ namespace Test.SmartContract.IpfsFileStorageContract
             var timestamp = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             var transactionHash = await _service.SetDescriptionAsync(SenderAddress,
-                1, CastHelper.StringToBytes32ArrayOf(6, newDescription), timestamp,
+                1, CastHelper.ToDescriptionType(newDescription), timestamp,
                 new HexBigInteger(500000));
             var receipt = await _service.MineAndGetReceiptAsync(transactionHash);
             
