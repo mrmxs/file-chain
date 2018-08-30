@@ -18,8 +18,6 @@ namespace API
                 .Build().Run();
         }
         
-        
-
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();

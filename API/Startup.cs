@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EthereumLibrary.Helper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +39,19 @@ namespace API
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            var requiredVariables = new Dictionary<string, string>
+            {
+                {"IPFS client host", Configuration["IPFS:API:host"]},
+                {"IPFS client port", Configuration["IPFS:API:port"]},
+                {"IPFS client protocol", Configuration["IPFS:API:protocol"]},
+                {"Ethereum RPC host", Configuration["Ethereum:RPCServer"]},
+                {"Ethereum Transaction Gas", Configuration["Ethereum:Gas"]},
+                {"Ethereum contract address", EnvironmentVariablesHelper.ContractAddress},
+                {"Ethereum wallet address", EnvironmentVariablesHelper.WalletAddress}
+            };
+            requiredVariables.Where(item => string.IsNullOrEmpty(item.Value)).ToList().ForEach(item =>
+                throw new ArgumentNullException(item.Key + " is required"));
         }
     }
 }

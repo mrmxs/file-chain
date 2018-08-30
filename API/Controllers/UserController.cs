@@ -7,10 +7,10 @@ using EthereumLibrary.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Nethereum.Geth;
-using Nethereum.Hex.HexTypes;
 using UserDto = API.Models.UserDto;
+using EV = EthereumLibrary.Helper.EnvironmentVariablesHelper;
 
-namespace API.Controllers.User
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -28,8 +28,8 @@ namespace API.Controllers.User
             _configuration = configuration;
 
             _web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
-            var contractAddress = _configuration["Ethereum:ContractAddress"] as string;
-            var walletAddress = _configuration["Ethereum:Wallet:Address"] as string;
+            var contractAddress = EV.ContractAddress;
+            var walletAddress = EV.WalletAddress;
             var gas = long.Parse(_configuration["Ethereum:Gas"]);
             _ethereumUserService = new EthereumUserService(_web3, contractAddress, walletAddress, gas);
         }

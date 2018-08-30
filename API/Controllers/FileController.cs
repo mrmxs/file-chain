@@ -12,6 +12,7 @@ using IPFSLibrary.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Nethereum.Geth;
+using EV = EthereumLibrary.Helper.EnvironmentVariablesHelper;
 
 namespace API.Controllers
 {
@@ -40,8 +41,8 @@ namespace API.Controllers
 
             //todo get secure info from Environment Variables 
             var web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
-            var contractAddress = _configuration["Ethereum:ContractAddress"] as string;
-            var walletAddress = _configuration["Ethereum:Wallet:Address"] as string;
+            var contractAddress = EV.ContractAddress;
+            var walletAddress = EV.WalletAddress;
             var gas = long.Parse(_configuration["Ethereum:Gas"]);
 
             _ethereumFileService = new EthereumFileService(web3, contractAddress, walletAddress, gas);
