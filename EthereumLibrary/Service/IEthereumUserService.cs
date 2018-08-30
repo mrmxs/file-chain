@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using EthereumLibrary.Model;
 
 namespace EthereumLibrary.Service
@@ -7,6 +8,12 @@ namespace EthereumLibrary.Service
     {
         Task<IEthereumUser> GetAsyncCall(string login);
         
+        Task<IEthereumUser> AddAsyncCall(string login, string password, string firstName, string lastName, string info);
+        
         Task<bool> AuthenticateAsyncCall(string login, string password);
+        
+        Task<bool> SetNameAsync(string login, string password, string firstName, string lastName, DateTime now);
+        
+        Task<bool> SetInfoAsync(string login, string password, string requestInfo, DateTime now);
     }
 }

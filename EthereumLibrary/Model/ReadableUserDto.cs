@@ -49,6 +49,8 @@ namespace EthereumLibrary.Model
         [Parameter("bytes32", "login", 1)]
         public string Login { get; set; }
 
+        public string Password { get; set; }
+
         [Parameter("bytes32[2]", "firstName", 2)]
         public string FirstName { get; set; }
 
