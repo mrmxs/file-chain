@@ -89,7 +89,7 @@ namespace API.Controllers
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var auth = await _ethereumUserService.AuthenticateAsyncCall(login, password); // todo
+            var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password); // todo
             if (!auth) return BadRequest(Errors.WRONG_CREDENTIALS);
 
             var filePath = request.Link;
@@ -97,12 +97,11 @@ namespace API.Controllers
             if (!System.IO.File.Exists(filePath))
                 return BadRequest(Errors.FILE_DOES_NOT_EXISTS);
 
-            // todo parse data
             var temp = new FileDto
             {
-                Name = "Text.doc",
-                Type = "image/jpeg",
-                Size = 123,
+                Name = Path.GetFileName(filePath),
+                // Type = "image/jpeg", // set later
+                Size = new FileInfo(filePath).Length,
                 Description = request.Description,
                 // Link = "", // set later
                 Created = DateTime.Today,
@@ -111,8 +110,15 @@ namespace API.Controllers
 
             using (var fileStream = new FileStream(filePath, FileMode.Open))
             {
-                var fileName = Guid.NewGuid().ToString();
-                var ipfsFile = _ipfsService.Add(fileName, fileStream);
+                using (var ms = new MemoryStream())
+                {
+                    fileStream.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+
+                    temp.Type = MimeType.GetMimeType(fileBytes.Take(50).ToArray(), filePath);
+                }
+                
+                var ipfsFile = _ipfsService.Add(temp.Name, fileStream);
                 temp.Link = ipfsFile.Hash;
             }
 
