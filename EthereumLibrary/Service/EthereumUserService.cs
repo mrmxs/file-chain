@@ -33,7 +33,7 @@ namespace EthereumLibrary.Service
         public async Task<bool> IsAuthenticatedAsyncCall(string login, string password)
         {
             var byteLogin = CastHelper.StringToBytes32(login);
-            var bytePassword = CastHelper.StringToBytes32(login);
+            var bytePassword = CastHelper.StringToBytes32(password);
 
             try
             {

@@ -44,9 +44,8 @@ namespace EthereumLibrary.Service
             var password = CastHelper.StringToBytes32(ownerPassword);
 
             var ids = await _contractService.GetFileIdsAsyncCall(login, password);
-            var bigIntsIds = ids.Select(p => new BigInteger(p)).ToArray();
 
-            return await GetAsyncCall(ownerLogin, ownerPassword, bigIntsIds);
+            return await GetAsyncCall(ownerLogin, ownerPassword, ids.ToArray());
         }
 
         public async Task<IEthereumFile> GetAsyncCall(string ownerLogin, string ownerPassword, BigInteger id)
@@ -99,8 +98,8 @@ namespace EthereumLibrary.Service
             var password = CastHelper.StringToBytes32(ownerPassword);
 
             var ids = await _contractService.GetFileIdsAsyncCall(login, password);
-
-            return ids.Select(p => new BigInteger(p)).ToArray();
+            
+            return ids.ToArray();
         }
 
         public async Task<bool> SetNameAsync(

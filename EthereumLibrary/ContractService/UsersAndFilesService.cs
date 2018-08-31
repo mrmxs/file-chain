@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -92,9 +93,9 @@ namespace EthereumLibrary.ContractService
             var function = GetFunctionSetAdmin();
             return function.CallAsync<bool>(_adminlogin, _adminpassword, _login, _isAdmin);
         }
-        public Task<long[]> GetFileIdsAsyncCall(byte[] _login, byte[] _password) {
+        public Task<List<BigInteger>> GetFileIdsAsyncCall(byte[] _login, byte[] _password) {
             var function = GetFunctionGetFileIds();
-            return function.CallAsync<long[]>(_login, _password);
+            return function.CallAsync<List<BigInteger>>(_login, _password);
         }
         public Task<byte[][]> SetFileNameAsyncCall(byte[] _login, byte[] _password, BigInteger _fileindex, byte[][] _value, int _timestamp) {
             var function = GetFunctionSetFileName();
