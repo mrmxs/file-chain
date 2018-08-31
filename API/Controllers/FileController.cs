@@ -212,7 +212,7 @@ namespace API.Controllers
                 if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
                     return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
 
-                return StatusCode(500);
+                return StatusCode(500, new ErrorDto(e.Message));
             }
         }
 
@@ -244,7 +244,7 @@ namespace API.Controllers
                 if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
                     return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
 
-                return StatusCode(500);
+                return StatusCode(500, new ErrorDto(e.Message));
             }
         }
 

@@ -54,7 +54,6 @@ namespace DeployApp
             DeployContract().Wait();
 
             Console.WriteLine("\n==================== Done ======================");
-            Console.ReadKey();
         }
 
         public static async Task DeployLibrary()

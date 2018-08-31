@@ -32,17 +32,18 @@ namespace EthereumLibrary.Service
 
         public async Task<bool> IsAuthenticatedAsyncCall(string login, string password)
         {
+            var byteLogin = CastHelper.StringToBytes32(login);
+            var bytePassword = CastHelper.StringToBytes32(login);
+
             try
             {
-                var responce = await _contractService.GetFileIdsAsyncCall(login, password);
+                var responce = await _contractService.GetFileIdsAsyncCall(byteLogin, bytePassword);
                 return true;
             }
             catch (Exception e)
             {
-                // ignored
+                return false;
             }
-
-            return false;
         }
 
         public async Task<IEthereumUser> AddAsyncCall(string login, string password, string firstName, string lastName,
@@ -54,7 +55,7 @@ namespace EthereumLibrary.Service
                 Password = CastHelper.StringToBytes32(password),
                 FirstName = CastHelper.ToUserNameType(firstName),
                 LastName = CastHelper.ToUserNameType(lastName),
-                Info = CastHelper.ToDescriptionType(info),
+                Info = CastHelper.ToDescriptionType(info ?? ""),
             };
 
             // send call to get output value 

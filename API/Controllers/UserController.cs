@@ -42,6 +42,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<UserProfileDto>> Post([FromBody] UserDto request)
         {
+            if (string.IsNullOrEmpty(request.Login)
+                || string.IsNullOrEmpty(request.Password)
+                || string.IsNullOrEmpty(request.FirstName)
+                || string.IsNullOrEmpty(request.LastName))
+                return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
+
             try
             {
                 var user = await _ethereumUserService.AddAsyncCall(
@@ -55,17 +61,17 @@ namespace API.Controllers
                     : null;
 
                 return Ok(new UserProfileDto
-                    {
-                        user = userDto,
-                        wallet = walletDto
-                    });
+                {
+                    user = userDto,
+                    wallet = walletDto
+                });
             }
             catch (Exception e)
             {
                 if (e.Message.Contains("LOGIN ALREADY EXISTS"))
                     return BadRequest(Errors.LOGIN_ALREADY_EXISTS);
 
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new ErrorDto(e.Message));
             }
         }
 
@@ -96,8 +102,8 @@ namespace API.Controllers
         [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<UserDto>> Get()
         {
-            var login = Request.Headers["X-Login"];
-            var password = Request.Headers["X-Token"];
+            var login = Request.Headers["X-Login"].ToString();
+            var password = Request.Headers["X-Token"].ToString();
 
             var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
 
@@ -112,14 +118,16 @@ namespace API.Controllers
         ///  PUT api/user
         /// </summary>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut]
         [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<UserDto>> Put([FromBody] UserDto request)
         {
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            if ((request.FirstName == "" || request.LastName == "") && request.Info == "")
+            if ((string.IsNullOrEmpty(request.FirstName)
+                 || string.IsNullOrEmpty(request.LastName))
+                && string.IsNullOrEmpty(request.Info))
                 return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
 
             var auth = await _ethereumUserService.IsAuthenticatedAsyncCall(login, password);
@@ -127,11 +135,11 @@ namespace API.Controllers
 
             try
             {
-                if (request.FirstName != "" && request.LastName != "")
+                if (!string.IsNullOrEmpty(request.FirstName) && !string.IsNullOrEmpty(request.LastName))
                     await _ethereumUserService.SetNameAsync(
                         login, password, request.FirstName, request.LastName, DateTime.Now);
 
-                if (request.Info != "")
+                if (!string.IsNullOrEmpty(request.Info))
                     await _ethereumUserService.SetInfoAsync(login, password,
                         request.Info, DateTime.Now);
 
@@ -151,7 +159,7 @@ namespace API.Controllers
                 if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
                     return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
 
-                return StatusCode(500);
+                return StatusCode(500, new ErrorDto(e.Message));
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
@@ -43,8 +44,9 @@ namespace EthereumLibrary.Service
             var password = CastHelper.StringToBytes32(ownerPassword);
 
             var ids = await _contractService.GetFileIdsAsyncCall(login, password);
+            var bigIntsIds = ids.Select(p => new BigInteger(p)).ToArray();
 
-            return await GetAsyncCall(ownerLogin, ownerPassword, ids);
+            return await GetAsyncCall(ownerLogin, ownerPassword, bigIntsIds);
         }
 
         public async Task<IEthereumFile> GetAsyncCall(string ownerLogin, string ownerPassword, BigInteger id)
@@ -96,7 +98,9 @@ namespace EthereumLibrary.Service
             var login = CastHelper.StringToBytes32(ownerLogin);
             var password = CastHelper.StringToBytes32(ownerPassword);
 
-            return await _contractService.GetFileIdsAsyncCall(login, password);
+            var ids = await _contractService.GetFileIdsAsyncCall(login, password);
+
+            return ids.Select(p => new BigInteger(p)).ToArray();
         }
 
         public async Task<bool> SetNameAsync(
@@ -112,7 +116,7 @@ namespace EthereumLibrary.Service
 
             var res = await _contractService.SetFileNameAsync(
                 _walletAddress, param.Login, param.Password, id, param.Name, param.Timestamp, _gas);
-            
+
             return true;
         }
 
@@ -129,7 +133,7 @@ namespace EthereumLibrary.Service
 
             var res = await _contractService.SetFileDescriptionAsync(
                 _walletAddress, param.Login, param.Password, id, param.Description, param.Timestamp, _gas);
-            
+
             return true;
         }
 
