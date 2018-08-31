@@ -1,0 +1,35 @@
+============ Deploy Contract App ===============
+
+------------ Library Deploying ------------------
+Unlock account for 120s
+  address: 0xcc03511b073b145a013ad788f7f95a5100dfd94f
+  pass:    0x0ffe15e7a91070fdecd9b0f193987660d207b3bbe66903d26395e50abbf71145
+
+Create transaction to deploy library
+  gas: 3000000
+  . . . Getting hash . . .  hash: 0xe58b6b0e1056e45bb516f75811ef0dd15a2023a327e0fbca6a01f482d02604cb
+Mine transaction
+  . . . Getting receipt . . .  gas used: 772466
+>>> Library Address: 0x8dd4634b927deabc3dd38100939aa9d236daada1
+
+------------ Contract Deploying ------------------
+Unlock account for 120s
+  address: 0xcc03511b073b145a013ad788f7f95a5100dfd94f
+  pass: 0x0ffe15e7a91070fdecd9b0f193987660d207b3bbe66903d26395e50abbf71145
+
+
+Create transaction to deploy contract
+  gas: 3000000
+  library address: 0x8dd4634b927deabc3dd38100939aa9d236daada1
+  Admin:
+    login:    admin
+    password: qwerty123
+    name:     John Doe
+    info:      
+  . . . Getting hash . . .  hash: 0xa4160446ef4720ebc907ff788a0aa0e30edf2f209bafe73f8a99680eec82e1ca
+Mine transaction
+  . . . Getting receipt . . .  gas used: 2682352
+>>>
+>>> Contract Address: 0xc3c4b39aa59aee0fa651b8c9d75372cc61cb7bee
+>>>
+==================== Done ======================

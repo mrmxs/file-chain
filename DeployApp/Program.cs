@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using EthereumLibrary.ContractService;
 using EthereumLibrary.Helper;
@@ -18,9 +21,11 @@ namespace DeployApp
 
         private static IDictionary<string, string> _dic;
 
+        private static string _logFile = "deployapp.log";
+        private static string _output = "contractaddress";
+
         static void Main(string[] args)
         {
-            Console.WriteLine("============ Deploy Contract App ===============");
             _dic = args.Aggregate(new Dictionary<string, string>(),
                 (dic, arg) =>
                 {
@@ -31,11 +36,12 @@ namespace DeployApp
             //EV.Clear();
             EV.WalletAddress = _dic["-wa"];
             EV.WalletPassword = _dic["-wp"];
+            if (!_dic.ContainsKey("-afn")) _dic.Add("-afn", "Admin");
+            if (!_dic.ContainsKey("-aln")) _dic.Add("-aln", "Admin");
             if (_dic.ContainsKey("-rcp")) EV.RcpClient = _dic["-rcp"];
             if (_dic.ContainsKey("-lib")) EV.LibraryAddress = _dic["--lib"];
             if (_dic.ContainsKey("-gas")) EV.Gas = new HexBigInteger(_dic["-gas"]);
-            
-            
+
             _web3 = new Web3Geth(EV.GetNotNull(EV.DOCCHAIN_RCP_CLIENT));
             _gas = new HexBigInteger(EV.GetNotNull(EV.DOCCHAIN_GAS));
             admin = new[]
@@ -44,61 +50,63 @@ namespace DeployApp
             };
 
 
-            Console.WriteLine("\n\n------------ Library Deploying ------------------\n");
+            WriteLog("============ Deploy Contract App ===============", clear: true);
+            WriteLog("\n\n------------ Library Deploying ------------------\n");
             if (_dic.ContainsKey("--lib"))
-                Console.WriteLine("\nUse deployed library\n" +
-                                  $">>> Library Address: {EV.LibraryAddress}");
+                WriteLog("\nUse deployed library\n" +
+                         $">>> Library Address: {EV.LibraryAddress}");
             else DeployLibrary().Wait();
-            
-            Console.WriteLine("\n\n------------ Contract Deploying ------------------\n");
+
+            WriteLog("\n\n------------ Contract Deploying ------------------\n");
             DeployContract().Wait();
 
-            Console.WriteLine("\n==================== Done ======================");
+            WriteLog("\n==================== Done ======================");
+            Console.ReadKey();
         }
 
         public static async Task DeployLibrary()
         {
             // 1. Unclock Account
             var unlockTime = new HexBigInteger(120);
-            Console.WriteLine($"Unlock account for {unlockTime.Value}s\n" +
-                              $"  address: {EV.WalletAddress}\n" +
-                              $"  pass:    {EV.WalletPassword}\n\n");
+            WriteLog($"Unlock account for {unlockTime.Value}s\n" +
+                     $"  address: {EV.WalletAddress}\n" +
+                     $"  pass:    {EV.WalletPassword}\n\n");
             var unlockRes = await _web3.Personal.UnlockAccount.SendRequestAsync(
                 EV.WalletAddress, EV.WalletPassword, unlockTime);
 
             // 2. Deploy library
-            Console.WriteLine("Create transaction to deploy library\n" +
-                              $"  gas: {_gas.Value}\n" +
-                              $"  . . . Getting hash . . .");
+            WriteLog("Create transaction to deploy library\n" +
+                     $"  gas: {_gas.Value}\n" +
+                     $"  . . . Getting hash . . .");
             var transactionHash =
                 await UsersAndFilesService.DeployLibraryAsync(_web3, EV.WalletAddress, _gas);
-            Console.WriteLine($"  hash: {transactionHash}");
+            WriteLog($"  hash: {transactionHash}");
 
             // 3. Mine transaction
-            Console.WriteLine("\nMine transaction\n" +
-                              "  . . . Getting receipt . . .");
+            WriteLog("\nMine transaction\n" +
+                     "  . . . Getting receipt . . .");
             var receipt = await UsersAndFilesService.MineAndGetReceiptAsync(_web3, transactionHash);
-            Console.WriteLine($"  gas used: {receipt.GasUsed.Value}");
+            WriteLog($"  gas used: {receipt.GasUsed.Value}");
 
             EV.LibraryAddress = receipt.ContractAddress;
-            Console.WriteLine($"\n>>> Library Address: {receipt.ContractAddress}");
+            WriteLog($"\n>>> Library Address: {receipt.ContractAddress}");
         }
 
         public static async Task DeployContract()
         {
             // 1. Unclock Account
             var unlockTime = new HexBigInteger(120);
-            Console.WriteLine($"Unlock account for {unlockTime.Value}s\n" +
-                              $"  address: {EV.WalletAddress}\n" +
-                              $"  pass: {EV.WalletPassword}\n\n");
+            WriteLog($"Unlock account for {unlockTime.Value}s\n" +
+                     $"  address: {EV.WalletAddress}\n" +
+                     $"  pass: {EV.WalletPassword}\n\n");
             var unlockRes = await _web3.Personal.UnlockAccount.SendRequestAsync(
                 EV.WalletAddress, EV.WalletPassword, unlockTime);
 
             // 2. Deploy contract
             // Get contract receipt & contractAddress, save contractAdress to file
-            Console.WriteLine("\nCreate transaction to deploy contract\n" +
-                              $"  gas: {_gas.Value}\n" +
-                              $"  library address: {EV.LibraryAddress}");
+            WriteLog("\nCreate transaction to deploy contract\n" +
+                     $"  gas: {_gas.Value}\n" +
+                     $"  library address: {EV.LibraryAddress}");
 
             var adminBytes = new
             {
@@ -109,12 +117,12 @@ namespace DeployApp
                 info = CastHelper.ToDescriptionType(admin[4]),
             };
 
-            Console.WriteLine($"\n  Admin:\n" +
-                              $"    login:    {admin[0]}\n" +
-                              $"    password: {admin[1]}\n" +
-                              $"    name:     {admin[2]} {admin[3]}\n" +
-                              $"    info:     {admin[4]}");
-            Console.WriteLine("\n  . . . Getting hash . . .");
+            WriteLog("\n  Admin:\n" +
+                     $"    login:    {admin[0]}\n" +
+                     $"    password: {admin[1]}\n" +
+                     $"    name:     {admin[2]} {admin[3]}\n" +
+                     $"    info:     {admin[4]}");
+            WriteLog("\n  . . . Getting hash . . .");
 
             var transactionHash =
                 await UsersAndFilesService.DeployContractAsync(_web3,
@@ -126,19 +134,29 @@ namespace DeployApp
                     adminBytes.lastName,
                     adminBytes.info,
                     _gas);
-            Console.WriteLine($"  hash: {transactionHash}");
+            WriteLog($"  hash: {transactionHash}");
 
             // 3. Mine transaction
-            Console.WriteLine("\nMine transaction\n" +
-                              "  . . . Getting receipt . . .");
+            WriteLog("\nMine transaction\n" +
+                     "  . . . Getting receipt . . .");
             var receipt = await UsersAndFilesService.MineAndGetReceiptAsync(_web3, transactionHash);
-            Console.WriteLine($"  gas used: {receipt.GasUsed.Value}");
+            WriteLog($"  gas used: {receipt.GasUsed.Value}");
 
             EV.ContractAddress = receipt.ContractAddress;
+            File.WriteAllText(_output, receipt.ContractAddress);
 
-            Console.WriteLine($"\n>>>\n" +
-                              $">>> Contract Address: {receipt.ContractAddress}\n" +
-                              $">>>");
+            WriteLog("\n>>>\n" +
+                     $">>> Contract Address: {receipt.ContractAddress}\n" +
+                     ">>>");
+        }
+
+        private static void WriteLog(string logtext, bool clear = false)
+        {
+            if (clear)
+                File.WriteAllText(_logFile, logtext);
+            else
+                File.AppendAllText(_logFile, logtext);
+            Console.WriteLine(logtext);
         }
     }
 }
