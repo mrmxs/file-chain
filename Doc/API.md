@@ -16,7 +16,7 @@ Header:
 GET /api/file - все файлы
 
 GET /api/file?type=\<type\> - файлы типа
-* text,image,audio,video,other
+* doc,image,audio,video,archive
 
 ````
 [{
@@ -86,7 +86,7 @@ POST /api/user - зарегаться
 }
 ````
 
-GET /api/user - инфо о профиле (инфо о кошельке тображается только админам)
+GET /api/user - инфо о профиле (инфо о кошельке отображается только админам)
 ````
 {
   "user": {
