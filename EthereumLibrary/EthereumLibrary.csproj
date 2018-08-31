@@ -33,10 +33,10 @@
     <EmbeddedResource Include="SmartContract\compiled\IpfsFileStorageLibrary.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="SmartContract\compiled\UserToFiles.abi">
+    <EmbeddedResource Include="SmartContract\compiled\UsersAndFiles.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="SmartContract\compiled\UserToFiles.bin">
+    <EmbeddedResource Include="SmartContract\compiled\UsersAndFiles.abi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

@@ -203,7 +203,6 @@ contract UsersAndFiles {
         _;
     }
 
-
     IpfsFileStorageLibrary.Data data;
     mapping (bytes32 => uint[]) userFiles; // login -> fileindex
 
@@ -212,7 +211,7 @@ contract UsersAndFiles {
         bytes32 _login,
         bytes32 _password,
         bytes32 _mimeType,
-        bytes32[2] _ipfsHash,
+        bytes32[6] _ipfsHash,
         bytes32 _size,
         bytes32[3] _name,
         bytes32[6] _description,
@@ -287,7 +286,7 @@ contract UsersAndFiles {
     authorized (_login, _password)
     fileowner (_login, _fileindex)
     returns (
-        bytes32, bytes32[2], bytes32,
+        bytes32, bytes32[6], bytes32,
         bytes32[3]
     )
     {

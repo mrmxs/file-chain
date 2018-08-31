@@ -4,7 +4,7 @@ library IpfsFileStorageLibrary {
 
     struct IpfsFile {
         bytes32 mimeType;
-        bytes32[2] ipfsHash;
+        bytes32[6] ipfsHash;
         bytes32 size;
         bytes32[3] name;        // set
         bytes32[6] description; // set
@@ -33,7 +33,7 @@ library IpfsFileStorageLibrary {
     function add (
         Data storage _self,
         bytes32 _mimeType,
-        bytes32[2] _ipfsHash,
+        bytes32[6] _ipfsHash,
         bytes32 _size,
         bytes32[3] _name,
         bytes32[6] _description,
@@ -62,7 +62,7 @@ library IpfsFileStorageLibrary {
     existed (_self, _index)
     returns (
         bytes32 mimeType,
-        bytes32[2] ipfsHash,
+        bytes32[6] ipfsHash,
         bytes32 size,
         bytes32[3] name,
         bytes32[6] description,
@@ -84,7 +84,7 @@ library IpfsFileStorageLibrary {
     existed (_self, _index)
     returns (
         bytes32 mimeType,
-        bytes32[2] ipfsHash,
+        bytes32[6] ipfsHash,
         bytes32 size,
         bytes32[3] name
     ) {

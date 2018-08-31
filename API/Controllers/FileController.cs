@@ -106,7 +106,7 @@ namespace API.Controllers
         // GET api/file/5
         [HttpGet("{id}")]
         [HasHeader("X-Login,X-Token")]
-        public async Task<ActionResult<FileDto>> Get(BigInteger id)
+        public async Task<ActionResult<FileDto>> Get(long id)
         {
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
@@ -121,6 +121,9 @@ namespace API.Controllers
         [HasHeader("X-Login,X-Token")]
         public async Task<ActionResult<FileDto>> Post([FromBody] FileDto request)
         {
+            if (string.IsNullOrEmpty(request.Link))
+                return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
+            
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
@@ -135,12 +138,12 @@ namespace API.Controllers
             var temp = new FileDto
             {
                 Name = Path.GetFileName(filePath),
-                // Type = "image/jpeg", // set later
                 Size = new FileInfo(filePath).Length,
-                Description = request.Description,
-                // Link = "", // set later
+                Description = request.Description ?? "",
                 Created = DateTime.Today,
-                // Modified, // not needed
+                // Type = "image/jpeg", // set later
+                // Link = "",           // set later
+                // Modified,            // not needed
             };
 
             using (var fileStream = new FileStream(filePath, FileMode.Open))
