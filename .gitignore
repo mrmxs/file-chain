@@ -3,3 +3,5 @@
 */bin
 bin
 .vscode
+DeployApp/contractaddress
+DeployApp/deployapp.log
