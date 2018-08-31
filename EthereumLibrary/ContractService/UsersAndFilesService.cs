@@ -14,8 +14,8 @@ namespace EthereumLibrary.ContractService
 {
    public class UsersAndFilesService : AbstractContractService
    {
-       public static string Abi => ResourceHelper.Get("UserToFiles.abi");
-       public static string ByteCode => ResourceHelper.Get("UserToFiles.bin");
+       public static string Abi => ResourceHelper.Get("UsersAndFiles.abi");
+       public static string ByteCode => ResourceHelper.Get("UsersAndFiles.bin");
        public static string LibAbi => ResourceHelper.Get("IpfsFileStorageLibrary.abi");
        public static string LibByteCode => ResourceHelper.Get("IpfsFileStorageLibrary.bin");
 

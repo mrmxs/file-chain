@@ -46,21 +46,11 @@ namespace EthereumLibrary.Model
     [FunctionOutput]
     public class ReadableUserDto : IEthereumUser
     {
-        [Parameter("bytes32", "login", 1)]
         public string Login { get; set; }
-
         public string Password { get; set; }
-
-        [Parameter("bytes32[2]", "firstName", 2)]
         public string FirstName { get; set; }
-
-        [Parameter("bytes32[2]", "lastName", 3)]
         public string LastName { get; set; }
-
-        [Parameter("bytes32[6]", "info", 4)]
         public string Info { get; set; }
-
-        [Parameter("bool", "isAdmin", 5)]
         public bool IsAdmin { get; set; }
     }
 }

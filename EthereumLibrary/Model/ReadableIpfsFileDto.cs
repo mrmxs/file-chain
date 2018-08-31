@@ -10,7 +10,7 @@ namespace EthereumLibrary.Model
     {
         [Parameter("bytes32", "mimeType", 1)] public string MimeType { get; set; }
 
-        [Parameter("bytes32[2]", "ipfsHash", 2)]
+        [Parameter("bytes32[6]", "ipfsHash", 2)]
         public List<string> IpfsHash { get; set; }
 
         [Parameter("bytes32", "size", 3)] public string Size { get; set; }
@@ -34,23 +34,13 @@ namespace EthereumLibrary.Model
     public class ReadableIpfsFileDto : IEthereumFile
     {
         public BigInteger Id { get; set; }
-        
-        [Parameter("bytes32", "mimeType", 1)]
         public string MimeType { get; set; }
-
-        [Parameter("bytes32[2]", "ipfsHash", 2)]
         public string IpfsHash { get; set; }
-
-        [Parameter("bytes32", "size", 3)] public string Size { get; set; }
-
-        [Parameter("bytes32[3]", "name", 4)] public string Name { get; set; }
-
-        [Parameter("bytes32[6]", "description", 5)]
+        public string Size { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
-
-        [Parameter("uint32", "created", 6)] public DateTime Created { get; set; }
-
-        [Parameter("uint32", "modified", 7)] public DateTime Modified { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
 
         public ReadableIpfsFileDto()
         {
