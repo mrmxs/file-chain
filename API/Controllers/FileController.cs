@@ -21,13 +21,15 @@ namespace API.Controllers
     public class FileController : ControllerBase
     {
         private IConfiguration _configuration;
-        private IIpfsService _ipfsService;
 
+        private Web3Geth _web3;
+        private string _walletAddress;
+        private string _contractAddress;
+        private BigInteger _gas;
+
+        private IIpfsService _ipfsService;
         private IEthereumFileService _ethereumFileService;
         private IEthereumUserService _ethereumUserService;
-
-        private string _walletAddress;
-        private int _gas;
 
         public FileController(IConfiguration configuration)
         {
@@ -39,14 +41,14 @@ namespace API.Controllers
                 _configuration["IPFS:API:protocol"]
             );
 
-            //todo get secure info from Environment Variables 
-            var web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
-            var contractAddress = EV.ContractAddress;
-            var walletAddress = EV.WalletAddress;
-            var gas = long.Parse(_configuration["Ethereum:Gas"]);
-
-            _ethereumFileService = new EthereumFileService(web3, contractAddress, walletAddress, gas);
-            _ethereumUserService = new EthereumUserService(web3, contractAddress, walletAddress, gas);
+            //todo get secure info from Environment Variables
+            _web3 = new Web3Geth(_configuration["Ethereum:RPCServer"] as string);
+            _contractAddress = EV.ContractAddress;
+            _walletAddress = EV.WalletAddress;
+            _gas = long.Parse(_configuration["Ethereum:Gas"]);
+            
+            _ethereumFileService = new EthereumFileService(_web3, _contractAddress, _walletAddress, _gas);
+            _ethereumUserService = new EthereumUserService(_web3, _contractAddress, _walletAddress, _gas);
         }
 
 
