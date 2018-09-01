@@ -40,7 +40,7 @@ namespace API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<UserProfileDto>> Post([FromBody] UserDto request)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto request)
         {
             if (string.IsNullOrEmpty(request.Login)
                 || string.IsNullOrEmpty(request.Password)
@@ -52,19 +52,9 @@ namespace API.Controllers
             {
                 var user = await _ethereumUserService.AddAsyncCall(
                     request.Login, request.Password, request.FirstName, request.LastName, request.Info);
-
-                var userDto = ConvertToDto(user);
-                var walletDto = user.IsAdmin
-                    ? new WalletDto(
-                        _walletAddress,
-                        await _web3.Eth.GetBalance.SendRequestAsync(_walletAddress))
-                    : null;
-
-                return Ok(new UserProfileDto
-                {
-                    user = userDto,
-                    wallet = walletDto
-                });
+            
+                return Ok(ConvertToDto(user));
+               
             }
             catch (Exception e)
             {
@@ -100,7 +90,7 @@ namespace API.Controllers
         /// <returns></returns>
         [HttpGet]
         [HasHeader("X-Login,X-Token")]
-        public async Task<ActionResult<UserDto>> Get()
+        public async Task<ActionResult<UserProfileDto>> Get()
         {
             var login = Request.Headers["X-Login"].ToString();
             var password = Request.Headers["X-Token"].ToString();
@@ -111,7 +101,19 @@ namespace API.Controllers
 
             var user = await _ethereumUserService.GetAsyncCall(login);
 
-            return Ok(ConvertToDto(user));
+            var userDto = ConvertToDto(user);
+            var walletDto = user.IsAdmin
+                            || !user.IsAdmin // TODO THIS IS CRUTCH TO GET WALLET - FIX & DELETE ME 
+                ? new WalletDto(
+                    _walletAddress,
+                    await _web3.Eth.GetBalance.SendRequestAsync(_walletAddress))
+                : null;
+
+            return Ok(new UserProfileDto
+            {
+                user = userDto,
+                wallet = walletDto
+            });
         }
 
         /// <summary>
