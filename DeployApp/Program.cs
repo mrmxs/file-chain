@@ -9,6 +9,7 @@ using EthereumLibrary.ContractService;
 using EthereumLibrary.Helper;
 using Nethereum.Geth;
 using Nethereum.Hex.HexTypes;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using EV = EthereumLibrary.Helper.EnvironmentVariablesHelper;
 
 namespace DeployApp
@@ -26,7 +27,8 @@ namespace DeployApp
 
         static void Main(string[] args)
         {
-            _dic = args.Aggregate(new Dictionary<string, string>(),
+            _dic = args.Where(arg => arg != "DeployApp.csproj")
+                .Aggregate(new Dictionary<string, string>(),
                 (dic, arg) =>
                 {
                     dic.Add(arg.Split("=")[0], arg.Split("=")[1]);
