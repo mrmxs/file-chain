@@ -33,7 +33,10 @@ namespace EthereumLibrary.Helper
                 var fromParentI = i * 32;
                 var tailIndex = 32 * (i + 1);
                 if (bytes.Length > fromParentI)
-                    Array.Copy(bytes, fromParentI, result[i], 0, bytes.Length >= tailIndex ? 32 : bytes.Length);
+                    Array.Copy(
+                        bytes, fromParentI,
+                        result[i], 0, 
+                        bytes.Length >= tailIndex ? 32 : bytes.Length % 32);
             }
 
             return result;

@@ -66,39 +66,19 @@ namespace API.Controllers
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var files = await _ethereumFileService.GetAsyncCall(login, password);
-
-            var filtered = (string.IsNullOrEmpty(type))
-                ? files
-                : files.Where(file =>
+            IEnumerable<IEthereumFile> files;
+            try
             {
-                var mimePart1 = file.MimeType.Split("/")[0];
-                switch (type.ToLower())
-                {
-                    case "image":
-                    case "audio":
-                    case "video":
-                        if (mimePart1 == type) return true;
-                        return false;
-                    case "document":
-                        if (new[]
-                        {
-                            "application/msword", 
-                            "application/pdf", 
-                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        }.Contains(file.MimeType)) return true;
-                        return false;
-                    case "archive":
-                        if (new[]
-                        {
-                            "application/x-rar-compressed", 
-                            "application/x-zip-compressed",
-                        }.Contains(file.MimeType)) return true;
-                        return false;
-                    default:
-                        return false;
-                }
-            });
+                files = await _ethereumFileService.GetAsyncCall(login, password);
+            }
+            catch (Exception e)
+            {
+                return HandleEthereumError(e.Message);
+            }
+
+            var filtered = (string.IsNullOrEmpty(type) || !MimeType.knownTypes.Contains(type))
+                ? files
+                : files.Where(file =>MimeType.IsCategory(file.MimeType, type.ToLower()));
 
             return Ok(filtered.Select(ConvertToDto));
         }
@@ -111,9 +91,17 @@ namespace API.Controllers
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
-            var file = await _ethereumFileService.GetAsyncCall(login, password, id);
-
-            return Ok(ConvertToDto(file));
+            try
+            {
+                var file = await _ethereumFileService.GetAsyncCall(login, password, id);
+                return Ok(ConvertToDto(file));
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("invalid opcode"))return NotFound();
+                        
+                return HandleEthereumError(e.Message);
+            }
         }
 
         // POST api/file
@@ -123,7 +111,7 @@ namespace API.Controllers
         {
             if (string.IsNullOrEmpty(request.Link))
                 return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
-            
+
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
 
@@ -140,7 +128,7 @@ namespace API.Controllers
                 Name = Path.GetFileName(filePath),
                 Size = new FileInfo(filePath).Length,
                 Description = request.Description ?? "",
-                Created = DateTime.Today,
+                Created = DateTime.Now,
                 // Type = "image/jpeg", // set later
                 // Link = "",           // set later
                 // Modified,            // not needed
@@ -160,17 +148,24 @@ namespace API.Controllers
                 temp.Link = ipfsFile.Hash;
             }
 
-            var etherFile = await _ethereumFileService.AddAsync(
-                login,
-                password,
-                temp.Type,
-                temp.Link,
-                temp.Size,
-                temp.Name,
-                temp.Description,
-                temp.Created);
+            try
+            {
+                var etherFile = await _ethereumFileService.AddAsync(
+                    login,
+                    password,
+                    temp.Type,
+                    temp.Link,
+                    temp.Size,
+                    temp.Name,
+                    temp.Description,
+                    temp.Created);
 
-            return Ok(ConvertToDto(etherFile));
+                return Ok(ConvertToDto(etherFile));
+            }
+            catch (Exception e)
+            {
+                return HandleEthereumError(e.Message);
+            }
         }
 
         // PUT api/file/5
@@ -180,49 +175,49 @@ namespace API.Controllers
         {
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
+            BigInteger id;
+            try
+            {
+                id = new BigInteger(long.Parse(RouteData.Values["id"].ToString()));
 
-            if (request.Id == null || (request.Name == "" && request.Description == ""))
-                return BadRequest("Required fields are missing");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
+            if (request.Name == "" && request.Description == "")
+                return BadRequest(Errors.REQUIRED_FIELDS_ARE_MISSING);
+            
             try
             {
                 var ids = await _ethereumFileService.GetIdsAsyncCall(login, password);
 
-                if (!ids.Contains(request.Id.Value))
+                if (!ids.Contains(id))
                     return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
 
-                if (request.Name != "")
-                    await _ethereumFileService.SetNameAsync(login, password, request.Id.Value, request.Name,
-                        DateTime.Now);
+                if (!string.IsNullOrEmpty(request.Name))
+                    await _ethereumFileService.SetNameAsync(
+                        login, password, id, request.Name, DateTime.Now);
 
-                if (request.Description != "")
-                    await _ethereumFileService.SetDescriptionAsync(login, password, request.Id.Value,
-                        request.Description, DateTime.Now);
+                if (!string.IsNullOrEmpty(request.Description))
+                    await _ethereumFileService.SetDescriptionAsync(
+                        login, password, id, request.Description, DateTime.Now);
 
-                var file = await _ethereumFileService.GetAsyncCall(login, password, request.Id.Value);
+                var file = await _ethereumFileService.GetAsyncCall(login, password, id);
 
                 return Ok(ConvertToDto(file));
             }
             catch (Exception e)
             {
-                if (e.Message.Contains("LOGIN DOESN'T EXIST"))
-                    return BadRequest(Errors.WRONG_CREDENTIALS);
-
-                if (e.Message.Contains("WRONG CREDENTIALS"))
-                    return BadRequest(Errors.WRONG_CREDENTIALS);
-
-                //only owner can edit
-                if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
-                    return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
-
-                return StatusCode(500, new ErrorDto(e.Message));
+                return HandleEthereumError(e.Message);
             }
         }
 
         // DELETE api/file/5
         [HttpDelete("{id}")]
         [HasHeader("X-Login,X-Token")]
-        public async Task<ActionResult> Delete(BigInteger id)
+        public async Task<ActionResult> Delete(long id)
         {
             var login = Request.Headers["X-Login"];
             var password = Request.Headers["X-Token"];
@@ -234,21 +229,26 @@ namespace API.Controllers
             }
             catch (Exception e)
             {
-                if (e.Message.Contains("LOGIN DOESN'T EXIST"))
-                    return BadRequest(Errors.WRONG_CREDENTIALS);
-
-                if (e.Message.Contains("WRONG CREDENTIALS"))
-                    return BadRequest(Errors.WRONG_CREDENTIALS);
-
-                if (e.Message.Contains("NOT EXISTING INDEX"))
-                    return BadRequest(Errors.INDEX_DOES_NOT_EXISTS);
-
-                //only owner can delete
-                if (e.Message.Contains("INSUFFICIENT PRIVILEGES"))
-                    return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
-
-                return StatusCode(500, new ErrorDto(e.Message));
+                return HandleEthereumError(e.Message);
             }
+        }
+
+        private ObjectResult HandleEthereumError(string message)
+        {
+            if (message.Contains("LOGIN DOESN'T EXIST"))
+                return BadRequest(Errors.WRONG_CREDENTIALS);
+
+            if (message.Contains("WRONG CREDENTIALS"))
+                return BadRequest(Errors.WRONG_CREDENTIALS);
+
+            if (message.Contains("NOT EXISTING INDEX"))
+                return BadRequest(Errors.INDEX_DOES_NOT_EXISTS);
+
+            //only owner can edit
+            if (message.Contains("INSUFFICIENT PRIVILEGES"))
+                return StatusCode(403, Errors.INSUFFICIENT_PRIVILEGES);
+
+            return StatusCode(500, new ErrorDto(message));
         }
 
         private FileDto ConvertToDto(IEthereumFile file)

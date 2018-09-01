@@ -46,17 +46,16 @@ namespace EthereumLibrary.Model
         {
         }
 
-        public ReadableIpfsFileDto(GetFilePart1Dto part1, GetFilePart2Dto part2)
+        public ReadableIpfsFileDto(BigInteger id, GetFilePart1Dto part1, GetFilePart2Dto part2)
         {
-            var file = new ReadableIpfsFileDto();
-
-            file.MimeType = part1.MimeType;
-            file.IpfsHash = String.Join<string>("", part1.IpfsHash.ToArray());
-            file.Size = part1.Size;
-            file.Name = String.Join<string>("", part1.Name.ToArray());
-            file.Description = String.Join<string>("", part2.Description.ToArray());
-            file.Created = new DateTime(part2.Created);
-            file.Modified = new DateTime(part2.Modified);
+            Id = id;
+            MimeType = part1.MimeType;
+            IpfsHash = String.Join<string>("", part1.IpfsHash.ToArray());
+            Size = part1.Size;
+            Name = String.Join<string>("", part1.Name.ToArray());
+            Description = String.Join<string>("", part2.Description.ToArray());
+            Created = DateTimeOffset.FromUnixTimeMilliseconds(part2.Created).UtcDateTime;
+            Modified = DateTimeOffset.FromUnixTimeMilliseconds(part2.Modified).UtcDateTime;
         }
     }
 }

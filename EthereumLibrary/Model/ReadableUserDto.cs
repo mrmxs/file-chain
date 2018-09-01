@@ -9,7 +9,7 @@ namespace EthereumLibrary.Model
     {
         [Parameter("uint256", "fileindex", 1)] public BigInteger Fileindex { get; set; }
 
-        [Parameter("uint256[]", "arr", 2)] public BigInteger[] Arr { get; set; }
+        [Parameter("uint256[]", "arr", 2)] public List<long> Arr { get; set; }
     }
 
     [FunctionOutput]

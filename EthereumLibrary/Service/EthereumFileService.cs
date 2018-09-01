@@ -56,7 +56,7 @@ namespace EthereumLibrary.Service
             var part1 = await _contractService.GetFilePart1AsyncCall(login, password, id);
             var part2 = await _contractService.GetFilePart2AsyncCall(login, password, id);
 
-            return new ReadableIpfsFileDto(part1, part2) {Id = id};
+            return new ReadableIpfsFileDto(id, part1, part2);
         }
 
         public async Task<IEthereumFile> AddAsync(
@@ -68,7 +68,7 @@ namespace EthereumLibrary.Service
                 Login = CastHelper.StringToBytes32(login),
                 Password = CastHelper.StringToBytes32(password),
                 Mime = CastHelper.StringToBytes32(type),
-                Hash = CastHelper.ToUserNameType(hash),
+                Hash = CastHelper.ToDescriptionType(hash),
                 Size = CastHelper.StringToBytes32(size.ToString()),
                 Name = CastHelper.ToFileNameType(name),
                 Description = CastHelper.ToDescriptionType(description),
@@ -88,7 +88,7 @@ namespace EthereumLibrary.Service
                 _gas);
 
             var receipt = await _contractService.MineAndGetReceiptAsync(transactionHash);
-
+            
             return await GetAsyncCall(login, password, response.Fileindex);
         }
 
@@ -113,8 +113,10 @@ namespace EthereumLibrary.Service
                 Timestamp = (int) ((DateTimeOffset) modified).ToUnixTimeSeconds()
             };
 
-            var res = await _contractService.SetFileNameAsync(
+            var transactionHash = await _contractService.SetFileNameAsync(
                 _walletAddress, param.Login, param.Password, id, param.Name, param.Timestamp, _gas);
+
+            var receipt = await _contractService.MineAndGetReceiptAsync(transactionHash);
 
             return true;
         }
@@ -130,16 +132,20 @@ namespace EthereumLibrary.Service
                 Timestamp = (int) ((DateTimeOffset) modified).ToUnixTimeSeconds()
             };
 
-            var res = await _contractService.SetFileDescriptionAsync(
+            var transactionHash = await _contractService.SetFileDescriptionAsync(
                 _walletAddress, param.Login, param.Password, id, param.Description, param.Timestamp, _gas);
+
+            var receipt = await _contractService.MineAndGetReceiptAsync(transactionHash);
 
             return true;
         }
 
         public async Task<bool> DeleteAsync(string login, string password, BigInteger id)
         {
-            var result = await _contractService.DeleteFileAsync(
+            var transactionHash = await _contractService.DeleteFileAsync(
                 _walletAddress, CastHelper.StringToBytes32(login), CastHelper.StringToBytes32(password), id, _gas);
+
+            var receipt = await _contractService.MineAndGetReceiptAsync(transactionHash);
 
             return true;
         }

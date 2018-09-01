@@ -15,7 +15,7 @@ namespace IPFSLibrary.Service
         public IpfsService(string host, int port, string protocol)
         {
             _apiUrl = $"{protocol}://{host}:{port}";
-            _fileEndpoint = $"{protocol}://{host}/ipfs/";
+            _fileEndpoint = $"{protocol}://gateway.infura.io/ipfs/";
             ;
         }
 

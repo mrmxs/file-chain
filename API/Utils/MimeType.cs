@@ -131,5 +131,37 @@ namespace API.Utils
 
             return mime;
         }
+
+        public static readonly string[] knownTypes = {"image", "audio", "video", "document", "archive"};
+
+        public static bool IsCategory(string mime, string type)
+        {
+            var mimePart1 = mime.Split("/")[0];
+            switch (type.ToLower())
+            {
+                case "image":
+                case "audio":
+                case "video":
+                    if (mimePart1 == type) return true;
+                    return false;
+                case "document":
+                    if (new[]
+                    {
+                        "application/msword",
+                        "application/pdf",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    }.Contains(mime)) return true;
+                    return false;
+                case "archive":
+                    if (new[]
+                    {
+                        "application/x-rar-compressed",
+                        "application/x-zip-compressed",
+                    }.Contains(mime)) return true;
+                    return false;
+                default:
+                    return false;
+            }
+        }
     }
 }
