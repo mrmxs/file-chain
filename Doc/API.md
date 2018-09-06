@@ -42,6 +42,8 @@ Responce:
 ````
 
 #### GET /api/file/1 - инфо о файле
+Response:
+- 200Ok
 ````
 {
   "id": 1,
@@ -78,7 +80,7 @@ Response:
 - 400BadRequest
 ````
 {
-  "error": "Require fields are missing",
+  "error": "Required fields are missing",
 }
 ````
 ````
@@ -100,8 +102,41 @@ Response:
   "description": "description",
 }
 ````
+Response:
+- 200Ok
+````
+{
+  "id": 1,
+  "name": "name",
+  "type": "image/jpeg",
+  "size": 123454,
+  "description": "description",
+  "link": "http://ipfs",
+  "modified": "2018-08-29T13:17:31.349Z",
+  "created": "2018-08-29T13:17:31.349Z"
+}
+````
+- 400BadRequest
+````
+{
+  "error": "Required fields are missing",
+}
+````
+- 403Forbidden 
+````
+{
+  "error": "Insufficient privileges",
+}
+````
 
 #### DELETE /api/file/1 - удалить файл
+Response:
+- 200 Ok()
+````
+{
+  "success": "File #4 was deleted",
+}
+````
 
 ### /api/user
 
@@ -123,7 +158,7 @@ Response:
 - 400BadRequest
 ````
 {
-  "error": "Require fields are missing",
+  "error": "Required fields are missing",
 }
 ````
 ````
