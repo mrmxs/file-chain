@@ -13,11 +13,11 @@ Header:
 
 ### /api/file
 
-#### GET /api/file - все файлы
+#### GET /api/file - все файлы, GET /api/file?type=\<type\> - файлы типа
+Доступные типы: doc,image,audio,video,archive
 
-#### GET /api/file?type=\<type\> - файлы типа
-* doc,image,audio,video,archive
-
+Responce:
+- 200Ok
 ````
 [{
   "id": 1,
@@ -61,6 +61,36 @@ Header:
   "link": "C://files/document.txt",
 }
 ````
+Response:
+- 200Ok
+````
+{
+  "id": 1,
+  "name": "name",
+  "type": "image/jpeg",
+  "size": 123454,
+  "description": "description",
+  "link": "http://ipfs",
+  "modified": "2018-08-29T13:17:31.349Z",
+  "created": "2018-08-29T13:17:31.349Z"
+}
+````
+- 400BadRequest
+````
+{
+  "error": "Require fields are missing",
+}
+````
+````
+{
+  "error": "Wrong credentials",
+}
+````
+````
+{
+  "error": "File does not exist",
+}
+````
 
 #### PUT /api/file/1 - редактировать файл
 ````
@@ -85,7 +115,7 @@ Header:
   "info": "info",    <----- не обязательное
 }
 ````
-Responce:
+Response:
 - 200Ok
 ````
 {}
@@ -110,7 +140,7 @@ Responce:
   "password": "password",
 }
 ````
-Responce:
+Response:
 - 200Ok
 ````
 {}
