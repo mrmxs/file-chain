@@ -74,6 +74,7 @@ class Form {
 
         $.ajax({
             type: 'DELETE',
+            contentType: 'application/json',
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
@@ -110,6 +111,7 @@ class Form {
 
         $.ajax({
             type: 'POST',
+            contentType: 'application/json',
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
