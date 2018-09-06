@@ -13,11 +13,11 @@ Header:
 
 ### /api/file
 
-GET /api/file - все файлы
+#### GET /api/file - все файлы, GET /api/file?type=\<type\> - файлы типа
+Доступные типы: doc,image,audio,video,archive
 
-GET /api/file?type=\<type\> - файлы типа
-* doc,image,audio,video,archive
-
+Responce:
+- 200Ok
 ````
 [{
   "id": 1,
@@ -41,7 +41,9 @@ GET /api/file?type=\<type\> - файлы типа
 }]
 ````
 
-GET /api/file/1 - инфо о файле
+#### GET /api/file/1 - инфо о файле
+Response:
+- 200Ok
 ````
 {
   "id": 1,
@@ -55,14 +57,44 @@ GET /api/file/1 - инфо о файле
 }
 ````
 
-POST /api/file - добавить  файл
+#### POST /api/file - добавить  файл
 ````
 {
   "link": "C://files/document.txt",
 }
 ````
+Response:
+- 200Ok
+````
+{
+  "id": 1,
+  "name": "name",
+  "type": "image/jpeg",
+  "size": 123454,
+  "description": "description",
+  "link": "http://ipfs",
+  "modified": "2018-08-29T13:17:31.349Z",
+  "created": "2018-08-29T13:17:31.349Z"
+}
+````
+- 400BadRequest
+````
+{
+  "error": "Required fields are missing",
+}
+````
+````
+{
+  "error": "Wrong credentials",
+}
+````
+````
+{
+  "error": "File does not exist",
+}
+````
 
-PUT /api/file/1 - редактировать файл
+#### PUT /api/file/1 - редактировать файл
 ````
 {
   "id": "id",
@@ -70,12 +102,45 @@ PUT /api/file/1 - редактировать файл
   "description": "description",
 }
 ````
+Response:
+- 200Ok
+````
+{
+  "id": 1,
+  "name": "name",
+  "type": "image/jpeg",
+  "size": 123454,
+  "description": "description",
+  "link": "http://ipfs",
+  "modified": "2018-08-29T13:17:31.349Z",
+  "created": "2018-08-29T13:17:31.349Z"
+}
+````
+- 400BadRequest
+````
+{
+  "error": "Required fields are missing",
+}
+````
+- 403Forbidden 
+````
+{
+  "error": "Insufficient privileges",
+}
+````
 
-DELETE /api/file/1 - удалить файл
+#### DELETE /api/file/1 - удалить файл
+Response:
+- 200 Ok()
+````
+{
+  "success": "File #4 was deleted",
+}
+````
 
 ### /api/user
 
-POST /api/user - зарегаться
+#### POST /api/user - зарегаться
 ````
 {
   "login": "login",
@@ -85,8 +150,44 @@ POST /api/user - зарегаться
   "info": "info",    <----- не обязательное
 }
 ````
+Response:
+- 200Ok
+````
+{}
+````
+- 400BadRequest
+````
+{
+  "error": "Required fields are missing",
+}
+````
+````
+{
+  "error": "Login already exists",
+}
+````
 
-GET /api/user - инфо о профиле (инфо о кошельке отображается только админам)
+
+#### DELETE /api/user - зарегаться
+````
+{
+  "login": "login",
+  "password": "password",
+}
+````
+Response:
+- 200Ok
+````
+{}
+````
+- 400BadRequest
+````
+{
+  "error": "Wrong credentials",
+}
+````
+
+#### GET /api/user - инфо о профиле (инфо о кошельке отображается только админам)
 ````
 {
   "user": {
@@ -105,7 +206,7 @@ GET /api/user - инфо о профиле (инфо о кошельке ото�
 }
 ````
 
-PUT /api/user - редактировать профиль
+#### PUT /api/user - редактировать профиль
 ````
 {
   "firstname": "name",
