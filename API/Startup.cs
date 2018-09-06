@@ -22,6 +22,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -36,8 +37,10 @@ namespace API
             {
                 app.UseHsts();
             }
-
-            app.UseHttpsRedirection();
+            app.UseCors(
+                options => options.WithOrigins(Configuration["Host"]).AllowAnyMethod()
+            );
+            
             app.UseMvc();
 
             var requiredVariables = new Dictionary<string, string>
